@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/vinoMamba/lazyledger/api/user;user";
+
+service User {
+  rpc Register(RegisterRequest) returns (RegisterReply);
+}
+
+message RegisterRequest {
+  string email = 1;
+  string code = 2;
+  string password = 3;
+}
+
+message RegisterReply {
+  string id = 1;
+}
