@@ -9,7 +9,9 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/vinoMamba/lazyledger/app/user/internal/biz"
 	"github.com/vinoMamba/lazyledger/app/user/internal/conf"
+	"github.com/vinoMamba/lazyledger/app/user/internal/data"
 	"github.com/vinoMamba/lazyledger/app/user/internal/server"
 	"github.com/vinoMamba/lazyledger/app/user/internal/service"
 )
@@ -18,6 +20,8 @@ import (
 func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		server.ProviderSet,
+		data.ProviderSet,
+		biz.ProviderSet,
 		service.ProviderSet,
 		newApp,
 	))

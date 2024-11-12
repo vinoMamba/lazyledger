@@ -2,10 +2,17 @@ syntax = "proto3";
 
 package user;
 
+import "google/api/annotations.proto";
+
 option go_package = "github.com/vinoMamba/lazyledger/api/user;user";
 
 service User {
-  rpc Register(RegisterRequest) returns (RegisterReply);
+  rpc Register(RegisterRequest) returns (RegisterReply) {
+    option (google.api.http) = {
+      post: "/user/register"
+      body: "*"
+    };
+  };
 }
 
 message RegisterRequest {
