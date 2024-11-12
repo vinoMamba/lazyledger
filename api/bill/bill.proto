@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package bill;
+
+option go_package = "github.com/vinoMamba/lazyledger/api/bill;bill";
+
+service Bill {
+	rpc CreateBill (CreateBillRequest) returns (CreateBillReply);
+}
+
+message CreateBillRequest {
+
+}
+
+message CreateBillReply {
+
+}
