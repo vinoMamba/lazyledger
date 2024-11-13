@@ -6,18 +6,23 @@
 package main
 
 import (
-	"lazyledger/internal/biz"
-	"lazyledger/internal/conf"
-	"lazyledger/internal/data"
-	"lazyledger/internal/server"
-	"lazyledger/internal/service"
-
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/vinoMamba/lazyledger/internal/biz"
+	"github.com/vinoMamba/lazyledger/internal/conf"
+	"github.com/vinoMamba/lazyledger/internal/repository"
+	"github.com/vinoMamba/lazyledger/internal/server"
+	"github.com/vinoMamba/lazyledger/internal/service"
 )
 
 // wireApp init kratos application.
 func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(
+		server.ProviderSet,
+		repository.ProviderSet,
+		biz.ProviderSet,
+		service.ProviderSet,
+		newApp,
+	))
 }

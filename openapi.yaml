@@ -3,37 +3,179 @@
 
 openapi: 3.0.3
 info:
-    title: Greeter API
-    description: The greeting service definition.
+    title: User API
     version: 0.0.1
 paths:
-    /helloworld/{name}:
-        get:
+    /user/email:
+        put:
             tags:
-                - Greeter
-                - subgroup
-            description: Sends a greeting
-            operationId: Greeter_SayHello
-            parameters:
-                - name: name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
+                - User
+            operationId: User_UpdateEmail
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.UpdateEmailRequest'
+                required: true
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
+                                $ref: '#/components/schemas/api.user.UpdateEmailReply'
+    /user/login:
+        post:
+            tags:
+                - User
+            operationId: User_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.LoginReply'
+    /user/password:
+        put:
+            tags:
+                - User
+            operationId: User_UpdatePassword
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.UpdatePasswordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.UpdatePasswordReply'
+    /user/profile:
+        get:
+            tags:
+                - User
+            operationId: User_GetProfile
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.GetProfileReply'
+        put:
+            tags:
+                - User
+            operationId: User_UpdateProfile
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.UpdateProfileRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.UpdateProfileReply'
+    /user/register:
+        post:
+            tags:
+                - User
+            operationId: User_Register
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.user.RegisterRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.user.RegisterReply'
 components:
     schemas:
-        helloworld.v1.HelloReply:
+        api.user.GetProfileReply:
             type: object
             properties:
-                message:
+                user:
+                    $ref: '#/components/schemas/api.user.UserInfo'
+        api.user.LoginReply:
+            type: object
+            properties:
+                token:
                     type: string
-            description: The response message containing the greetings
+        api.user.LoginRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+        api.user.RegisterReply:
+            type: object
+            properties:
+                id:
+                    type: string
+        api.user.RegisterRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+        api.user.UpdateEmailReply:
+            type: object
+            properties: {}
+        api.user.UpdateEmailRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+        api.user.UpdatePasswordReply:
+            type: object
+            properties: {}
+        api.user.UpdatePasswordRequest:
+            type: object
+            properties:
+                oldPassword:
+                    type: string
+                newPassword:
+                    type: string
+        api.user.UpdateProfileReply:
+            type: object
+            properties: {}
+        api.user.UpdateProfileRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                avatar:
+                    type: string
+        api.user.UserInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                username:
+                    type: string
+                email:
+                    type: string
+                avatar:
+                    type: string
 tags:
-    - name: Greeter
+    - name: User

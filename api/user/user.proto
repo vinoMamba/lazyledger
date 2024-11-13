@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package api.user;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/vinoMamba/lazyledger/api/user;user";
+
+service User {
+  rpc Register(RegisterRequest) returns (RegisterReply) {
+    option (google.api.http) = {
+      post: "/user/register"
+      body: "*"
+    };
+  };
+  rpc Login(LoginRequest) returns (LoginReply) {
+    option (google.api.http) = {
+      post: "/user/login"
+      body: "*"
+    };
+  };
+  rpc GetProfile(GetProfileRequest) returns (GetProfileReply) {
+    option (google.api.http) = {
+      get: "/user/profile"
+    };
+  };
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileReply) {
+    option (google.api.http) = {
+      put: "/user/profile"
+      body: "*"
+    };
+  };
+  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordReply) {
+    option (google.api.http) = {
+      put: "/user/password"
+      body: "*"
+    };
+  };
+  rpc UpdateEmail(UpdateEmailRequest) returns (UpdateEmailReply) {
+    option (google.api.http) = {
+      put: "/user/email"
+      body: "*"
+    };
+  };
+}
+
+message UserInfo {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string avatar = 4;
+}
+
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+}
+message RegisterReply {
+  string id = 1;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginReply {
+  string token = 1;
+}
+
+message GetProfileRequest {}
+message GetProfileReply {
+  UserInfo user = 1;
+}
+
+message UpdateProfileRequest {
+  string username = 1;
+  string avatar = 2;
+}
+message UpdateProfileReply {
+}
+
+message UpdatePasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+}
+message UpdatePasswordReply {}
+
+message UpdateEmailRequest {
+  string email = 1;
+}
+message UpdateEmailReply {}
