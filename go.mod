@@ -3,6 +3,7 @@ module github.com/vinoMamba/lazyledger
 go 1.23.3
 
 require (
+	github.com/envoyproxy/protoc-gen-validate v1.1.0
 	github.com/go-kratos/kratos/v2 v2.8.2
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0

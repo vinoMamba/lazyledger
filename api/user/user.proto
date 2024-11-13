@@ -3,6 +3,7 @@ syntax = "proto3";
 package user;
 
 import "google/api/annotations.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/vinoMamba/lazyledger/api/user;user";
 
@@ -16,9 +17,12 @@ service User {
 }
 
 message RegisterRequest {
-  string email = 1;
-  string code = 2;
-  string password = 3;
+  string email = 1 [(validate.rules).string.email = true];
+  string code = 2 [(validate.rules).string = {
+    len: 4,
+    pattern: "^[0-9]+$"
+  }];
+  string password = 3 [(validate.rules).string.min_len = 6];
 }
 
 message RegisterReply {
