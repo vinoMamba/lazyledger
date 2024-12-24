@@ -1,22 +1,33 @@
-import { SidebarTrigger } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import { ModeToggle } from "../theme/mode-toggle"
-import { AppUser } from "./app-user"
+import { Button } from "../ui/button"
+import { ArrowDownWideNarrow, Filter, Search, Plus } from "lucide-react"
 
 
 export const AppTopNav = () => {
   return (
     <header className={cn(
-      "w-full z-50 bg-sidebar/80 backdrop-blur-sm md:hidden flex justify-between items-center h-14 shrink-0 transition-[width,height] ease-linear border-b border-b-border/50 fixed top-0 left-0 right-0",
-      "group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12",
+      "w-full bg-sidebar flex justify-between items-center h-14 border-b",
     )}>
-      <div className="flex items-center gap-2 pl-4">
-        <SidebarTrigger />
-      </div>
-      <nav className="flex items-center gap-8 pr-8">
-        <div className="flex items-center gap-4">
-          <ModeToggle />
-          <AppUser />
+      <nav className="px-8 flex items-center gap-4 justify-between w-full">
+        <div className="flex items-center gap-2">
+          <Button size="icon" variant="outline">
+            <Filter />
+          </Button>
+          <Button size="icon" variant="outline">
+            <ArrowDownWideNarrow />
+          </Button>
+          <Button size="icon" variant="outline">
+            <Search />
+          </Button>
+          <Button size="icon" variant="outline">
+            <Plus />
+          </Button>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          去问 AI 助手
+          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+            <span className="text-xs">⌘</span>K
+          </kbd>
         </div>
       </nav>
     </header>
