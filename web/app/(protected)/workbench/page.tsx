@@ -1,5 +1,4 @@
-import { ArrowDownWideNarrow, Plus, Search } from "lucide-react"
-
+import { ArrowDownWideNarrow, Search } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Filter } from "lucide-react";
@@ -7,6 +6,7 @@ import { ResizableHandle } from "@/components/ui/resizable";
 import { ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
 import { TransactionTable } from "@/components/transaction/transaction- table";
+import { AddTransaction } from "@/components/transaction/add-transaction";
 
 
 
@@ -26,9 +26,7 @@ export default function WorkbenchPage() {
             <Button size="icon" variant="outline">
               <Search />
             </Button>
-            <Button size="icon" variant="outline">
-              <Plus />
-            </Button>
+            <AddTransaction />
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
             去问 AI 助手

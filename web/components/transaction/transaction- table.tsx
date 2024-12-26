@@ -64,7 +64,6 @@ function generateMockTransactions(days: number = 30): Transaction[] {
         id: `trans-${i}-${j}`,
         description: descriptions[Math.floor(Math.random() * descriptions.length)],
         category: categories[Math.floor(Math.random() * categories.length)],
-        // 从 【1，2，3，4】中随机选择几个
         tags: Array.from({ length: Math.floor(Math.random() * 4) + 1 }, () => Math.floor(Math.random() * 4) + 1).map(String),
         amount: Math.floor(Math.random() * 1000) + 10,
         type: isExpense ? 'expense' : 'income',
@@ -91,7 +90,7 @@ export const TransactionTable = () => {
         accessorKey: 'description',
         header: '描述',
         cell: ({ row }) => {
-          return <div className="text-sm text-gray-500">{row.original.description}</div>
+          return <div className="text-sm">{row.original.description}</div>
         }
       },
       {
@@ -159,7 +158,7 @@ export const TransactionTable = () => {
           const row = rows[virtualRow.index] as Row<Transaction>
           return (
             <div
-              className="flex w-full absolute cursor-pointer my-2"
+              className="flex w-full absolute cursor-pointer my-2 items-center"
               key={virtualRow.key}
               style={{ transform: `translateY(${virtualRow.start}px)` }}
             >
