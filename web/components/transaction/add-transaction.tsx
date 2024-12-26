@@ -2,9 +2,8 @@
 
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -12,22 +11,31 @@ import { AddTransactionSchema } from "@/schemas/transaction"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { DatePicker } from "./date-picker"
 import { useHotkeys } from "react-hotkeys-hook"
+import { AmountInput } from "./amount-input"
+import { DescriptionInput } from "./description-input"
 
 export const AddTransaction = () => {
   const [open, setOpen] = useState(false)
 
   useHotkeys('alt+n', () => setOpen(true))
 
+
   const form = useForm<z.infer<typeof AddTransactionSchema>>({
     resolver: zodResolver(AddTransactionSchema),
     defaultValues: {
-      amount: 0,
+      amount: 0.00,
       date: "",
       description: "",
       category: "",
       type: "income"
     },
   })
+
+  useEffect(() => {
+    if (open) {
+      form.reset()
+    }
+  }, [open, form])
 
   const onSubmit = form.handleSubmit(values => {
     console.log(values)
@@ -41,9 +49,9 @@ export const AddTransaction = () => {
         <Plus />
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="top-1/4 shadow-2xl border bg-sidebar" hiddenClose>
+        <DialogContent className="top-1/4 shadow-2xl border bg-sidebar">
           <DialogHeader>
-            <DialogTitle></DialogTitle>
+            <DialogTitle>添加交易</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={onSubmit}>
@@ -54,7 +62,7 @@ export const AddTransaction = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input {...field} placeholder="描述" />
+                        <DescriptionInput {...field} placeholder="描述" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -66,7 +74,7 @@ export const AddTransaction = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input {...field} placeholder="金额" type="number" />
+                        <AmountInput value={field.value} onChange={field.onChange} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -84,6 +92,9 @@ export const AddTransaction = () => {
                     </FormItem>
                   )}
                 />
+                <Button type="submit" className="w-full">
+                  添 加
+                </Button>
               </div>
             </form>
           </Form>

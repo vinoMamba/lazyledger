@@ -5,7 +5,7 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 import { CalendarIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { addDays, addMonths, format, startOfDay, startOfWeek, subDays, subMonths } from "date-fns"
+import { addDays, addMonths, format, startOfWeek, subDays, subMonths } from "date-fns"
 import * as chrono from 'chrono-node'
 
 type DateOption = {
@@ -15,7 +15,7 @@ type DateOption = {
 }
 
 const initOptions: DateOption[] = [
-  { label: 'Today', value: 'today', date: startOfDay(new Date()) },
+  { label: 'Today', value: 'today', date: addDays(new Date(), 0) },
   { label: 'Yesterday', value: 'yesterday', date: subDays(new Date(), 1) },
   { label: 'Tomorrow', value: 'tomorrow', date: addDays(new Date(), 1) },
   { label: 'Last week', value: 'last week', date: subDays(new Date(), 7) },
