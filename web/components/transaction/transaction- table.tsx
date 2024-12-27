@@ -5,7 +5,9 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { useEffect, useMemo, useRef, useState } from "react"
 import dayjs from "dayjs"
 import { Category } from "./category"
-import { TagList } from "./tag"
+import { TagList } from "./tag-cell"
+import { TagSchema } from "@/schemas/transaction"
+import { z } from "zod"
 
 
 
@@ -13,7 +15,7 @@ export type Transaction = {
   id: string
   description: string
   category: Category
-  tags: string[]
+  tags: z.infer<typeof TagSchema>[]
   amount: number
   type: 'expense' | 'income'
   date: string
@@ -64,7 +66,12 @@ function generateMockTransactions(days: number = 30): Transaction[] {
         id: `trans-${i}-${j}`,
         description: descriptions[Math.floor(Math.random() * descriptions.length)],
         category: categories[Math.floor(Math.random() * categories.length)],
-        tags: Array.from({ length: Math.floor(Math.random() * 4) + 1 }, () => Math.floor(Math.random() * 4) + 1).map(String),
+        tags: [
+          { id: '1', name: '必需品', color: '#8d01f8' },
+          { id: '2', name: '非必需', color: '#ff5d04' },
+          { id: '3', name: '固定支出', color: '#939d00' },
+          { id: '4', name: '临时支出', color: '#0685f2' },
+        ],
         amount: Math.floor(Math.random() * 1000) + 10,
         type: isExpense ? 'expense' : 'income',
         date: dayjs(date).format('YYYY-MM-DD')
@@ -104,7 +111,7 @@ export const TransactionTable = () => {
         accessorKey: 'tags',
         header: '标签',
         cell: ({ row }) => {
-          return <TagList tagIdList={row.original.tags} />
+          return <TagList tagList={row.original.tags} />
         }
       },
       {
