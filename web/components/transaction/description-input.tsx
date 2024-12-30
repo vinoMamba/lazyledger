@@ -1,27 +1,42 @@
 "use client"
-import * as React from "react"
 import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Banknote } from "lucide-react"
+import { forwardRef, useRef } from "react"
 
-const DescriptionInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+const DescriptionInput = forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ type, ...props }, ref) => {
+
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const handleFocus = () => {
+      inputRef.current?.focus()
+    }
+
     return (
-      <div className={cn(
-        buttonVariants({ variant: "outline" }),
-        "w-full justify-start text-left font-normal bg-sidebar hover:bg-sidebar",
-      )}
+      <Button
+        variant="outline"
+        className="w-full justify-start text-left font-normal bg-sidebar hover:bg-sidebar focus-within:ring-1 focus-within:ring-ring"
+        onFocus={handleFocus}
       >
         <Banknote className="w-4 h-4" />
         <input
           type={type}
+          tabIndex={-1}
           className={cn(
-            "w-full bg-transparent outline-none border-none",
+            "w-full bg-transparent outline-none border-none caret-transparent",
           )}
-          ref={ref}
+          ref={(node) => {
+            if (typeof ref === 'function') {
+              ref(node)
+            } else if (ref) {
+              ref.current = node
+            }
+            inputRef.current = node
+          }}
           {...props}
         />
-      </div>
+      </Button >
     )
   }
 )

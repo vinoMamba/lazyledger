@@ -46,9 +46,20 @@ export const TagSelect = ({ value, onChange, children, align = 'center' }: TagSe
       <PopoverTrigger asChild>
         <div>{children}</div>
       </PopoverTrigger>
-      <PopoverContent className="w-[29rem]" align={align}>
+      <PopoverContent
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            e.stopPropagation()
+          }
+        }}
+        className="w-[29rem]" align={align}>
         <Command>
-          <CommandInput placeholder="Search date..." value={searchValue} onValueChange={setSearchValue} />
+          <CommandInput
+            placeholder="Search date..."
+            value={searchValue}
+            onValueChange={setSearchValue}
+          />
           <CommandList className="max-h-[170px] ">
             <CommandEmpty>No date found.</CommandEmpty>
             <CommandGroup>

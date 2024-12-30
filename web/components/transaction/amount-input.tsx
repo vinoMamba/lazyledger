@@ -1,31 +1,41 @@
 "use client"
-import * as React from "react"
-import { MoveDownRight, MoveUpRight } from "lucide-react"
+import { Coins } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
+import { forwardRef, useRef } from "react"
 
-const AmountInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"input"> & { value: number, onChange: (value: number) => void }>(
-  ({ type, value, onChange, ...props }, ref) => {
+const AmountInput = forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+  ({ ...props }, ref) => {
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const handleFocus = () => {
+      inputRef.current?.focus()
+    }
     return (
-      <div className={cn(
-        buttonVariants({ variant: "outline" }),
-        "w-full justify-start text-left font-normal bg-sidebar hover:bg-sidebar",
+      <Button variant="outline" className={cn(
+        "w-full justify-start text-left font-normal bg-sidebar hover:bg-sidebar focus-within:ring-1 focus-within:ring-ring",
       )}
+        onFocus={handleFocus}
       >
-        {
-          value >= 0 ? <MoveUpRight className="w-4 h-4 text-green-500" /> : <MoveDownRight className="w-4 h-4 text-red-500" />
-        }
+        <Coins className="w-4 h-4" />
         <input
-          type={type}
+          type="number"
+          tabIndex={-1}
+          placeholder="0.00"
           className={cn(
-            "w-full bg-transparent outline-none border-none",
-            value >= 0 ? "text-green-500" : "text-red-500"
+            "w-full bg-transparent outline-none border-none caret-transparent",
           )}
-          ref={ref}
-          onChange={e => onChange(Number(e.target.value))}
+          ref={(node) => {
+            if (typeof ref === 'function') {
+              ref(node)
+            } else if (ref) {
+              ref.current = node
+            }
+            inputRef.current = node
+          }}
           {...props}
         />
-      </div>
+      </Button>
     )
   }
 )

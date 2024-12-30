@@ -13,6 +13,7 @@ import { DatePicker } from "./date-picker"
 import { useHotkeys } from "react-hotkeys-hook"
 import { AmountInput } from "./amount-input"
 import { DescriptionInput } from "./description-input"
+import { TagFormItem } from "./tag-form-item"
 
 export const AddTransaction = () => {
   const [open, setOpen] = useState(false)
@@ -23,11 +24,12 @@ export const AddTransaction = () => {
   const form = useForm<z.infer<typeof AddTransactionSchema>>({
     resolver: zodResolver(AddTransactionSchema),
     defaultValues: {
-      amount: 0.00,
+      amount: 0,
       date: "",
       description: "",
       category: "",
-      type: "income"
+      type: "income",
+      tags: []
     },
   })
 
@@ -74,7 +76,7 @@ export const AddTransaction = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <AmountInput value={field.value} onChange={field.onChange} />
+                        <AmountInput {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -87,6 +89,18 @@ export const AddTransaction = () => {
                     <FormItem>
                       <FormControl>
                         <DatePicker value={field.value} onChange={field.onChange} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <TagFormItem value={field.value} onChange={field.onChange} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
