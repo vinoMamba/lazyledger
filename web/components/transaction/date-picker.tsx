@@ -64,8 +64,8 @@ export const DatePicker = ({ value, onChange }: { value: string, onChange: (date
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-full justify-start text-left font-normal bg-sidebar hover:bg-sidebar">
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(new Date(value), 'PPPP') : '日期'}
+          <CalendarIcon className="h-4 w-4" />
+          {value ? format(new Date(value), 'PPPP') : <span className="text-muted-foreground">日期</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[29rem]">

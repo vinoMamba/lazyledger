@@ -4,9 +4,9 @@ import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, Row, useReac
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useEffect, useMemo, useRef, useState } from "react"
 import dayjs from "dayjs"
-import { Category } from "./category"
+import { CategoryCell } from "./category-cell"
 import { TagList } from "./tag-cell"
-import { TagSchema } from "@/schemas/transaction"
+import { CategorySchema, TagSchema } from "@/schemas/transaction"
 import { z } from "zod"
 
 
@@ -14,7 +14,7 @@ import { z } from "zod"
 export type Transaction = {
   id: string
   description: string
-  category: Category
+  category: z.infer<typeof CategorySchema>
   tags: z.infer<typeof TagSchema>[]
   amount: number
   type: 'expense' | 'income'
@@ -24,7 +24,7 @@ export type Transaction = {
 // 生成示例数据的辅助函数
 function generateMockTransactions(days: number = 30): Transaction[] {
   const transactions: Transaction[] = []
-  const categories: Category[] = [
+  const categories: z.infer<typeof CategorySchema>[] = [
     {
       id: '1',
       name: '餐饮',
@@ -104,7 +104,7 @@ export const TransactionTable = () => {
         accessorKey: 'category',
         header: '分类',
         cell: ({ row }) => {
-          return <Category category={row.original.category} />
+          return <CategoryCell category={row.original.category} />
         }
       },
       {

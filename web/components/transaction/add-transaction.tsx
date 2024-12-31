@@ -9,11 +9,13 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AddTransactionSchema } from "@/schemas/transaction"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { DatePicker } from "./date-picker"
 import { useHotkeys } from "react-hotkeys-hook"
-import { AmountInput } from "./amount-input"
 import { DescriptionInput } from "./description-input"
+import { TypeSelect } from "./type-select"
+import { AmountInput } from "./amount-input"
+import { DatePicker } from "./date-picker"
 import { TagFormItem } from "./tag-form-item"
+import { CategoryFormItem } from "./category-form-item"
 
 export const AddTransaction = () => {
   const [open, setOpen] = useState(false)
@@ -24,11 +26,11 @@ export const AddTransaction = () => {
   const form = useForm<z.infer<typeof AddTransactionSchema>>({
     resolver: zodResolver(AddTransactionSchema),
     defaultValues: {
-      amount: 0,
+      amount: 0.00,
       date: "",
       description: "",
-      category: "",
-      type: "income",
+      category: null,
+      type: "expense",
       tags: []
     },
   })
@@ -60,6 +62,18 @@ export const AddTransaction = () => {
               <div className=" space-y-4">
                 <FormField
                   control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <TypeSelect {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
@@ -88,7 +102,19 @@ export const AddTransaction = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <DatePicker value={field.value} onChange={field.onChange} />
+                        <DatePicker {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <CategoryFormItem {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -100,7 +126,7 @@ export const AddTransaction = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <TagFormItem value={field.value} onChange={field.onChange} />
+                        <TagFormItem {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
