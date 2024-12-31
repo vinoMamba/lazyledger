@@ -5,11 +5,9 @@ import { Filter } from "lucide-react";
 import { ResizableHandle } from "@/components/ui/resizable";
 import { ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
-import { TransactionTable } from "@/components/transaction/transaction- table";
+import { TransactionTable } from "@/components/transaction/transaction-table";
 import { AddTransaction } from "@/components/transaction/add-transaction";
-
-
-
+import { TransactionPanel } from "@/components/transaction/transaction-panel";
 
 export default function WorkbenchPage() {
   return (
@@ -41,14 +39,12 @@ export default function WorkbenchPage() {
           direction="horizontal"
           className="w-full h-full"
         >
-          <ResizablePanel defaultSize={40}>
+          <ResizablePanel defaultSize={50}>
             <TransactionTable />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={60}>
-            <div className="flex h-full items-center justify-center p-6">
-              <span className="font-semibold">Content</span>
-            </div>
+          <ResizablePanel defaultSize={50}>
+            <TransactionPanel />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

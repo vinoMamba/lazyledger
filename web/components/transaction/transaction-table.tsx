@@ -3,11 +3,12 @@
 import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, Row, useReactTable } from "@tanstack/react-table"
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useEffect, useMemo, useRef, useState } from "react"
-import dayjs from "dayjs"
 import { CategoryCell } from "./category-cell"
 import { TagList } from "./tag-cell"
 import { CategorySchema, TagSchema } from "@/schemas/transaction"
 import { z } from "zod"
+import { format } from "date-fns"
+import { useTransaction } from "@/hooks/use-transaction"
 
 
 
@@ -74,22 +75,34 @@ function generateMockTransactions(days: number = 30): Transaction[] {
         ],
         amount: Math.floor(Math.random() * 1000) + 10,
         type: isExpense ? 'expense' : 'income',
-        date: dayjs(date).format('YYYY-MM-DD')
+        date: format(date, 'yyyy-MM-dd')
       })
     }
   }
 
-  return transactions.sort((a, b) => dayjs(b.date).unix() - dayjs(a.date).unix())
+  return transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
 
 
 export const TransactionTable = () => {
+  const setCurrentTransaction = useTransaction(s => s.setCurrentTransaction)
+  const currentTransaction = useTransaction(s => s.currentTransaction)
+
+
   const columns = useMemo<ColumnDef<Transaction>[]>(
     () => [
       {
         accessorKey: 'date',
         header: '日期',
         cell: ({ row }) => {
+          if (row.original.date === format(new Date(), 'yyyy-MM-dd')) {
+            return (
+              <div className="text-sm text-gray-500 flex items-center gap-2">
+                {row.original.date}
+                <span className="font-semibold text-xs">TODAY</span>
+              </div>
+            )
+          }
           return <div className="text-sm text-gray-500">{row.original.date}</div>
         }
       },
@@ -149,6 +162,9 @@ export const TransactionTable = () => {
     overscan: 5,
   })
 
+  const handleRowClick = (row: Row<Transaction>) => {
+    setCurrentTransaction(row.original)
+  }
 
 
   return (
@@ -165,13 +181,17 @@ export const TransactionTable = () => {
           const row = rows[virtualRow.index] as Row<Transaction>
           return (
             <div
-              className="flex w-full absolute cursor-pointer my-2 items-center"
+              className="flex w-full absolute cursor-pointer my-2 items-center px-4"
               key={virtualRow.key}
-              style={{ transform: `translateY(${virtualRow.start}px)` }}
+              style={{
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+              onClick={() => handleRowClick(row)}
             >
+              {currentTransaction?.id === row.original.id && <div className="w-1 h-4 bg-gray-500 rounded-full absolute left-0 top-0 translate-y-1/2"></div>}
               {row.getVisibleCells().map(cell => {
                 return (
-                  <div key={cell.id} className="w-full">
+                  <div key={cell.id} className="w-full" >
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext()
