@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { RegisterSchema } from "@/schemas/user"
 import Link from "next/link"
+import { registerAction } from "@/actions/register"
 
 export const RegisterForm = () => {
 
@@ -22,10 +23,15 @@ export const RegisterForm = () => {
     },
   })
 
-  const onSubmit = form.handleSubmit(values => {
+  const onSubmit = form.handleSubmit(async (values) => {
     console.log(values)
-    router.push('/login')
-    toast.success('注册成功')
+    const res = await registerAction(values)
+    if (res.code === 200) {
+      router.push('/login')
+      toast.success('注册成功')
+    } else {
+      toast.error(res.message)
+    }
   })
   return (
     <Form {...form}>

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { LoginWithPasswordSchema } from "@/schemas/user"
 import Link from "next/link"
+import { loginAction } from "@/actions/login"
 
 export const LoginForm = () => {
 
@@ -22,10 +23,14 @@ export const LoginForm = () => {
     },
   })
 
-  const onSubmit = form.handleSubmit(values => {
-    console.log(values)
-    router.push('/workbench')
-    toast.success('登录成功')
+  const onSubmit = form.handleSubmit(async (values) => {
+    const res = await loginAction(values)
+    if (res.code === 200) {
+      router.push('/workbench')
+      toast.success('登录成功')
+    } else {
+      toast.error(res.message)
+    }
   })
   return (
     <Form {...form}>
