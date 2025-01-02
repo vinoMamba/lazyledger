@@ -23,21 +23,14 @@ func JWTMiddleware(jwt *jwt.JWT, userBiz biz.UserBiz) fiber.Handler {
 				})
 			}
 			c.Locals(UserKey, claims)
-			u, err := userBiz.GetUserInfo(c, claims.UserId)
+			_, err = userBiz.GetUserInfo(c, claims.UserId)
 			if err != nil {
 				log.Errorf("get user error:%v", err)
 				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 					"message": "unauthorized",
 				})
 			}
-			if u.IsActive {
-				return c.Next()
-			} else {
-				return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-					"message": "unauthorized, current user is not active",
-				})
-			}
-
+			return c.Next()
 		} else {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"message": "unauthorized",

@@ -1,3 +1,4 @@
+import { HomeLoginButton } from "@/components/auth/home-login-button";
 import { Logo } from "@/components/logo";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import { Button } from "@/components/ui/button";
@@ -20,9 +21,7 @@ export default function Home() {
         <div className="max-w-screen-lg mx-auto flex justify-between items-center">
           <Logo />
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Link href="/login">登 录</Link>
-            </Button>
+            <HomeLoginButton />
             <ModeToggle />
           </div>
         </div>

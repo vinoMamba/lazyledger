@@ -55,7 +55,7 @@ func (h *userHandler) Login(ctx fiber.Ctx) error {
 }
 
 func (h *userHandler) GetUserInfo(ctx fiber.Ctx) error {
-	userId := ctx.Locals("userId").(string)
+	userId := GetUserIdFromLocals(ctx)
 	user, err := h.userBiz.GetUserInfo(ctx, userId)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
