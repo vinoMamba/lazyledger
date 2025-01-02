@@ -2,10 +2,15 @@ package biz
 
 import (
 	"errors"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
+	"github.com/h2non/filetype"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/vinoMamba/lazyledger/api/req"
 	"github.com/vinoMamba/lazyledger/api/res"
@@ -17,6 +22,7 @@ type UserBiz interface {
 	Register(ctx fiber.Ctx, params *req.RegisterReq) error
 	Login(ctx fiber.Ctx, params *req.LoginWithPasswordReq) (*res.LoginWithPasswordRes, error)
 	GetUserInfo(ctx fiber.Ctx, userId string) (*res.GetUserInfoRes, error)
+	UploadAvatar(ctx fiber.Ctx, file *multipart.FileHeader, userId string) error
 }
 
 type userBiz struct {
@@ -102,4 +108,39 @@ func (b *userBiz) GetUserInfo(ctx fiber.Ctx, userId string) (*res.GetUserInfoRes
 		CreatedAt: user.CreatedAt.Time.Format(time.DateTime),
 	}, nil
 
+}
+
+func (b *userBiz) UploadAvatar(ctx fiber.Ctx, file *multipart.FileHeader, userId string) error {
+	f, err := file.Open()
+	if err != nil {
+		log.Errorf("open file error: &v", err)
+		return err
+	}
+
+	defer f.Close()
+	fileBytes, err := io.ReadAll(f)
+
+	if err != nil {
+		log.Errorf("read file error: &v", err)
+		return err
+	}
+
+	isImage := filetype.IsImage(fileBytes)
+	if !isImage {
+		return errors.New("this file is not image")
+	}
+
+	fileName := fmt.Sprintf("%s_%s_%s", userId, strconv.FormatInt(time.Now().Unix(), 10), file.Filename)
+	filePath := b.Config.GetString("asset.icon_file_path") + fileName
+
+	params := repository.UpdateUserAvatarParams{
+		Avatar:    pgtype.Text{Valid: true, String: fileName},
+		ID:        userId,
+		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
+	}
+	if err := b.Queries.UpdateUserAvatar(ctx.Context(), params); err != nil {
+		log.Errorf("database error: &v", err)
+		return errors.New("internal server error")
+	}
+	return ctx.SaveFile(file, filePath)
 }

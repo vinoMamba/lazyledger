@@ -18,3 +18,12 @@ export const GetUserInfoSchema = z.object({
   createdAt: z.string(),
   avatar: z.string().optional(),
 })
+
+export const UpdateUserEmailSchema = z.object({
+  email: z.string().email(),
+})
+
+export const UpdateUserPasswordSchema = z.object({
+  password: z.string().min(6),
+  newPassword: z.string().min(6),
+})

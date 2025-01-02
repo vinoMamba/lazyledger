@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 	"github.com/vinoMamba/lazyledger/api/req"
 	"github.com/vinoMamba/lazyledger/internal/biz"
 )
@@ -10,6 +11,7 @@ type UserHandler interface {
 	Register(ctx fiber.Ctx) error
 	Login(ctx fiber.Ctx) error
 	GetUserInfo(ctx fiber.Ctx) error
+	UpdateUserAvatar(ctx fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -63,4 +65,25 @@ func (h *userHandler) GetUserInfo(ctx fiber.Ctx) error {
 		})
 	}
 	return ctx.Status(fiber.StatusOK).JSON(user)
+}
+
+func (u *userHandler) UpdateUserAvatar(c fiber.Ctx) error {
+	userId := GetUserIdFromLocals(c)
+	file, err := c.FormFile("file")
+	if err != nil {
+		log.Errorf("Read file error: %v", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := u.userBiz.UploadAvatar(c, file, userId); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "upload avatar failed",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
 }

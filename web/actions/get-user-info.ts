@@ -13,6 +13,9 @@ export const getUserInfoAction = async () => {
         "Content-Type": "application/json",
         'Authorization': `Bearer ${token}`
       },
+      next: {
+        tags: ['getUserInfo']
+      }
     })
     const json = await result.json();
     const userInfo = GetUserInfoSchema.safeParse(json)

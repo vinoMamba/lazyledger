@@ -7,6 +7,7 @@ require (
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/wire v0.6.0
+	github.com/h2non/filetype v1.1.3
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/sony/sonyflake v1.2.0
 	github.com/spf13/viper v1.19.0

@@ -5,10 +5,11 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 export const HomeLoginButton = async () => {
   const userInfo = await getUserInfoAction()
+  const url = `${process.env.NEXT_API_URL}/upload/icon/${userInfo?.avatar}`
   if (userInfo) {
 
     return <Avatar className="h-8 w-8 rounded-lg">
-      <AvatarImage src={userInfo?.avatar} alt="avatar" />
+      <AvatarImage src={url} alt="avatar" />
       <AvatarFallback className="text-xs">A</AvatarFallback>
     </Avatar>
 

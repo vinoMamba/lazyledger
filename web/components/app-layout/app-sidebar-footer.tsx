@@ -9,6 +9,7 @@ import { LogoutButton } from "@/components/auth/logout-button"
 
 export const AppSidebarFooter = async () => {
   const userInfo = await getUserInfoAction()
+  const url = `${process.env.NEXT_API_URL}/upload/icon/${userInfo?.avatar}`
   return (
     <SidebarFooter>
       <div className="flex flex-col items-center gap-2 group-has-[[data-collapsible=icon]]/sidebar-wrapper:opacity-100 opacity-0 transition-opacity duration-200">
@@ -24,7 +25,7 @@ export const AppSidebarFooter = async () => {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src="/images/avatar.png" alt="avatar" />
+                    <AvatarImage src={url} alt="avatar" />
                     <AvatarFallback className="text-xs">A</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -43,7 +44,7 @@ export const AppSidebarFooter = async () => {
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={userInfo?.avatar} alt="avatar" />
+                      <AvatarImage src={url} alt="avatar" />
                       <AvatarFallback className="text-xs">A</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
