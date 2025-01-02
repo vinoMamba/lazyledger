@@ -36,6 +36,7 @@ export const CategorySelect = ({ value, onChange, children, align = 'center' }: 
   const handleSelect = (selectValue: string) => {
     onChange(categoryOptions.find(item => item.name === selectValue)!)
     setSearchValue('')
+    setOpen(false)
   }
   return (
     <Popover open={open} onOpenChange={setOpen}>
