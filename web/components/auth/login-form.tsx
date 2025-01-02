@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { LoginWithPasswordSchema } from "@/schemas/user"
+import Link from "next/link"
 
 export const LoginForm = () => {
 
@@ -59,6 +60,11 @@ export const LoginForm = () => {
           <Button type="submit" className="w-full">
             登 录
           </Button>
+          <Link href="/register">
+            <Button variant="link" className="w-full">
+              没有账号？去注册
+            </Button>
+          </Link>
         </div>
       </form>
     </Form>

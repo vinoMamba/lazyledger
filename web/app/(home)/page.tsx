@@ -19,7 +19,12 @@ export default function Home() {
       <header className=" border-b">
         <div className="max-w-screen-lg mx-auto flex justify-between items-center">
           <Logo />
-          <ModeToggle />
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm">
+              <Link href="/login">登 录</Link>
+            </Button>
+            <ModeToggle />
+          </div>
         </div>
       </header>
       <section className="max-w-screen-lg mx-auto pt-16 px-4 relative h-full">
@@ -29,7 +34,7 @@ export default function Home() {
             一个简单的账单分析工具
           </p>
           <div className="flex items-center gap-4 mt-8">
-            <Link href="/login">
+            <Link href="/register">
               <RainbowButton className="px-6 h-9 rounded-md">开始使用</RainbowButton>
             </Link>
             <Link href="" target="_blank">
