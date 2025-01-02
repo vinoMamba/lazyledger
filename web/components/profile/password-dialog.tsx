@@ -1,5 +1,5 @@
 "use client"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -11,6 +11,9 @@ import { Keyboard } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { UpdateUserPasswordSchema } from "@/schemas/user"
 import { useState } from "react"
+import { logoutAction } from "@/actions/logout"
+import { updatePasswordAction } from "@/actions/update-password"
+import { toast } from "sonner"
 
 export const PasswordDialog = () => {
   const [open, setOpen] = useState(false)
@@ -22,18 +25,18 @@ export const PasswordDialog = () => {
     }
   })
   const onSubmit = form.handleSubmit(async (values) => {
-    // try {
-    //   const { code, message } = await updateUserPasswordAction(values)
-    //   if (code === 200) {
-    //     toast.success(message)
-    //     logoutAction()
-    //   } else {
-    //     toast.error(message)
-    //   }
-    // } finally {
-    //   setOpen(false)
-    //   form.reset()
-    // }
+    try {
+      const { code, message } = await updatePasswordAction(values)
+      if (code === 200) {
+        toast.success(message)
+        logoutAction()
+      } else {
+        toast.error(message)
+      }
+    } finally {
+      setOpen(false)
+      form.reset()
+    }
   })
 
   return (
@@ -47,13 +50,11 @@ export const PasswordDialog = () => {
             <Keyboard />
             修改密码
           </DialogTitle>
-          <DialogDescription>
-            修改密码后，需重新登录
-          </DialogDescription>
         </DialogHeader>
         <Alert variant="destructive">
           <AlertTitle>警告</AlertTitle>
           <AlertDescription>
+            修改密码后，需重新登录
           </AlertDescription>
         </Alert>
         <Form {...form}>

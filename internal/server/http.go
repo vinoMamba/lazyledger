@@ -47,9 +47,10 @@ func NewHttpServer(
 	user := app.Group("/user")
 	user.Use(middleware.JWTMiddleware(jwt, userBiz))
 	user.Get("/info", userHandler.GetUserInfo)
-	// user.Put("/email", userHandler.UpdateUserEmail)
-	// user.Put("/password", userHandler.UpdateUserPassword)
+	user.Put("/email", userHandler.UpdateUserEmail)
+	user.Put("/password", userHandler.UpdateUserPassword)
 	user.Put("/avatar", userHandler.UpdateUserAvatar)
+	user.Put("/username", userHandler.UpdateUsername)
 
 	app.Use(middleware.NotFound())
 	return app

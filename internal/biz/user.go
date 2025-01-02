@@ -23,6 +23,9 @@ type UserBiz interface {
 	Login(ctx fiber.Ctx, params *req.LoginWithPasswordReq) (*res.LoginWithPasswordRes, error)
 	GetUserInfo(ctx fiber.Ctx, userId string) (*res.GetUserInfoRes, error)
 	UploadAvatar(ctx fiber.Ctx, file *multipart.FileHeader, userId string) error
+	UpdateUsername(ctx fiber.Ctx, userId string, username string) error
+	UpdateUserEmail(ctx fiber.Ctx, userId string, email string) error
+	UpdateUserPassword(ctx fiber.Ctx, userId string, req *req.UpdateUserPasswordReq) error
 }
 
 type userBiz struct {
@@ -143,4 +146,85 @@ func (b *userBiz) UploadAvatar(ctx fiber.Ctx, file *multipart.FileHeader, userId
 		return errors.New("internal server error")
 	}
 	return ctx.SaveFile(file, filePath)
+}
+
+func (b *userBiz) UpdateUsername(ctx fiber.Ctx, userId string, username string) error {
+
+	_, err := b.Queries.GetUserById(ctx.Context(), userId)
+	if err != nil {
+		log.Errorf("get user by id error: %v", err)
+		return errors.New("user not found")
+	}
+
+	params := repository.UpdateUserUsernameParams{
+		Username:  username,
+		ID:        userId,
+		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
+		UpdatedBy: pgtype.Text{Valid: true, String: userId},
+	}
+
+	if err := b.Queries.UpdateUserUsername(ctx.Context(), params); err != nil {
+		log.Errorf("update user username error: %v", err)
+		return errors.New("internal server error")
+	}
+	return nil
+}
+
+func (b *userBiz) UpdateUserEmail(ctx fiber.Ctx, userId string, email string) error {
+
+	_, err := b.Queries.GetUserById(ctx.Context(), userId)
+	if err != nil {
+		log.Errorf("get user by id error: %v", err)
+		return errors.New("user not found")
+	}
+
+	existUser, err := b.Queries.GetUserByEmail(ctx.Context(), email)
+	if err == nil && existUser.ID != "" {
+		log.Errorf("get user by email error: %v", err)
+		return errors.New("current email already exists")
+	}
+
+	params := repository.UpdateUserEmailParams{
+		Email:     email,
+		ID:        userId,
+		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
+		UpdatedBy: pgtype.Text{Valid: true, String: userId},
+	}
+
+	if err := b.Queries.UpdateUserEmail(ctx.Context(), params); err != nil {
+		log.Errorf("update user email error: %v", err)
+		return errors.New("internal server error")
+	}
+	return nil
+}
+
+func (b *userBiz) UpdateUserPassword(ctx fiber.Ctx, userId string, req *req.UpdateUserPasswordReq) error {
+	user, err := b.Queries.GetUserById(ctx.Context(), userId)
+	if err != nil {
+		log.Errorf("get user by id error: %v", err)
+		return errors.New("user not found")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		return errors.New("password is incorrect")
+	}
+
+	hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		log.Errorf("generate password error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	params := repository.UpdateUserPasswordParams{
+		Password:  string(hashedNewPassword),
+		ID:        userId,
+		UpdatedAt: pgtype.Timestamp{Valid: true, Time: time.Now()},
+		UpdatedBy: pgtype.Text{Valid: true, String: userId},
+	}
+
+	if err := b.Queries.UpdateUserPassword(ctx.Context(), params); err != nil {
+		log.Errorf("update user password error: %v", err)
+		return errors.New("internal server error")
+	}
+	return nil
 }

@@ -2,41 +2,39 @@
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useState } from "react"
-import { UpdateUserEmailSchema } from "@/schemas/user"
+import { UpdateUserUsernameSchema } from "@/schemas/user"
+import { updateUsernameAction } from "@/actions/update-username"
 import { toast } from "sonner"
-import { logoutAction } from "@/actions/logout"
-import { updateEmailAction } from "@/actions/update-email"
 
 type Props = {
-  email?: string
+  username?: string
 }
 
-export const EmailDialog = ({ email = "" }: Props) => {
+export const UsernameDialog = ({ username = "" }: Props) => {
   const [open, setOpen] = useState(false)
 
-  const form = useForm<z.infer<typeof UpdateUserEmailSchema>>({
-    resolver: zodResolver(UpdateUserEmailSchema),
+  const form = useForm<z.infer<typeof UpdateUserUsernameSchema>>({
+    resolver: zodResolver(UpdateUserUsernameSchema),
     defaultValues: {
-      email,
+      username,
     }
   })
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {
-      const { code, message } = await updateEmailAction(values.email)
+      const { code, message } = await updateUsernameAction(values.username)
       if (code === 200) {
         toast.success(message)
-        logoutAction()
+        setOpen(false)
       } else {
         toast.error(message)
-        form.setValue('email', email)
+        form.setValue('username', username)
       }
     } finally {
       setOpen(false)
@@ -46,24 +44,13 @@ export const EmailDialog = ({ email = "" }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <span className={cn(buttonVariants({ size: 'sm' }))}>更新邮箱</span>
+        <span className={cn(buttonVariants({ size: 'sm' }))}>更新用户名</span>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>更新邮箱</DialogTitle>
+          <DialogTitle>更新用户名</DialogTitle>
           <DialogDescription></DialogDescription>
-          <div className=" flex items-center gap-x-1">
-            <span>当前邮箱为 </span>
-            <b> {email}</b>
-            <span>.</span>
-          </div>
         </DialogHeader>
-        <Alert variant="destructive">
-          <AlertTitle>警告</AlertTitle>
-          <AlertDescription>
-            更新邮箱后需要重新登录。
-          </AlertDescription>
-        </Alert>
         <Form {...form}>
           <form
             onSubmit={onSubmit}
@@ -71,15 +58,15 @@ export const EmailDialog = ({ email = "" }: Props) => {
           >
             <FormField
               control={form.control}
-              name="email"
+              name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>请输入新的邮箱</FormLabel>
+                  <FormLabel>请输入新的用户名</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="请输入新的邮箱"
-                      type="email"
+                      placeholder="请输入新的用户名"
+                      type="text"
                     />
                   </FormControl>
                   <FormMessage />
@@ -87,7 +74,7 @@ export const EmailDialog = ({ email = "" }: Props) => {
               )}
             />
             <Button type="submit" className="w-full">
-              更新邮箱
+              更新用户名
             </Button>
           </form>
         </Form>

@@ -19,11 +19,15 @@ export const GetUserInfoSchema = z.object({
   avatar: z.string().optional(),
 })
 
+export const UpdateUserPasswordSchema = z.object({
+  password: z.string().min(6),
+  newPassword: z.string().min(6),
+})
+
 export const UpdateUserEmailSchema = z.object({
   email: z.string().email(),
 })
 
-export const UpdateUserPasswordSchema = z.object({
-  password: z.string().min(6),
-  newPassword: z.string().min(6),
+export const UpdateUserUsernameSchema = z.object({
+  username: z.string().min(1),
 })

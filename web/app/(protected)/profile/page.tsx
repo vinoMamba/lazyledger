@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { getFirstStr } from "@/lib/string";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { EmailDialog } from "@/components/profile/email-dialog";
+import { UsernameDialog } from "@/components/profile/username-dialog";
 
 export default async function ProfilePage() {
   const userInfo = await getUserInfoAction();
@@ -26,7 +27,10 @@ export default async function ProfilePage() {
         </div>
         <div className="flex flex-col gap-4 text-sm">
           <span className="text-muted-foreground text-lg font-semibold">用户名</span>
-          <Input value={userInfo?.username} disabled />
+          <div className=" flex items-center gap-4">
+            <Input value={userInfo?.username} disabled />
+            <UsernameDialog username={userInfo?.username} />
+          </div>
         </div>
         <div className="space-y-4">
           <div className="flex flex-col gap-4 text-sm">

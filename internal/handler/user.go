@@ -12,6 +12,9 @@ type UserHandler interface {
 	Login(ctx fiber.Ctx) error
 	GetUserInfo(ctx fiber.Ctx) error
 	UpdateUserAvatar(ctx fiber.Ctx) error
+	UpdateUsername(ctx fiber.Ctx) error
+	UpdateUserEmail(ctx fiber.Ctx) error
+	UpdateUserPassword(ctx fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -84,6 +87,60 @@ func (u *userHandler) UpdateUserAvatar(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+
+func (h *userHandler) UpdateUsername(ctx fiber.Ctx) error {
+	userId := GetUserIdFromLocals(ctx)
+	params := new(req.UpdateUsernameReq)
+	if err := ctx.Bind().JSON(params); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	if err := h.userBiz.UpdateUsername(ctx, userId, params.Username); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+
+func (h *userHandler) UpdateUserEmail(ctx fiber.Ctx) error {
+	userId := GetUserIdFromLocals(ctx)
+	params := new(req.UpdateUserEmailReq)
+	if err := ctx.Bind().JSON(params); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	if err := h.userBiz.UpdateUserEmail(ctx, userId, params.Email); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+
+func (h *userHandler) UpdateUserPassword(ctx fiber.Ctx) error {
+	userId := GetUserIdFromLocals(ctx)
+	params := new(req.UpdateUserPasswordReq)
+	if err := ctx.Bind().JSON(params); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	if err := h.userBiz.UpdateUserPassword(ctx, userId, params); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "ok",
 	})
 }

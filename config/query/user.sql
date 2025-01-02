@@ -35,3 +35,10 @@ email = $2,
 updated_by = $3,
 updated_at = $4
 WHERE id = $1;
+
+-- name: UpdateUserUsername :exec
+UPDATE users SET 
+username = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1;
