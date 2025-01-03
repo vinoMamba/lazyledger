@@ -8,6 +8,19 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Category struct {
+	ID    string
+	Name  string
+	Color string
+	// 0: income, 1: expense
+	Type      int16
+	IsDeleted pgtype.Bool
+	CreatedBy pgtype.Text
+	CreatedAt pgtype.Timestamp
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
+}
+
 type User struct {
 	ID        string
 	Username  string

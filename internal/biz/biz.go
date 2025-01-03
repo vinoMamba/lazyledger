@@ -11,6 +11,7 @@ import (
 var ProviderSet = wire.NewSet(
 	NewBiz,
 	NewUserBiz,
+	NewCategoryBiz,
 )
 
 type Biz struct {
