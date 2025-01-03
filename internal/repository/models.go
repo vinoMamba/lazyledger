@@ -12,6 +12,7 @@ type Category struct {
 	ID    string
 	Name  string
 	Color string
+	Icon  string
 	// 0: income, 1: expense
 	Type      int16
 	IsDeleted pgtype.Bool

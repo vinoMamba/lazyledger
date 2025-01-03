@@ -3,10 +3,11 @@ INSERT INTO categories (
   id, 
   name, 
   color,
+  icon,
   type,
   created_by,
   created_at
-) VALUES ($1, $2, $3, $4, $5,$6);
+) VALUES ($1, $2, $3, $4, $5, $6, $7);
 
 -- name: GetCategoryById :one
 SELECT * FROM categories WHERE id = $1 AND is_deleted = false LIMIT 1;
@@ -15,9 +16,10 @@ SELECT * FROM categories WHERE id = $1 AND is_deleted = false LIMIT 1;
 UPDATE categories SET 
 name = $2,
 color = $3,
-type = $4,
-updated_by = $5,
-updated_at = $6
+icon = $4,
+type = $5,
+updated_by = $6,
+updated_at = $7
 WHERE id = $1;
 
 -- name: DeleteCategory :exec

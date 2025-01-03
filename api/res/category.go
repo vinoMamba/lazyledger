@@ -5,4 +5,5 @@ type CategoryItem struct {
 	Name  string `json:"name"`
 	Color string `json:"color"`
 	Type  int    `json:"type"`
+	Icon  string `json:"icon"`
 }
