@@ -2,7 +2,7 @@ import { CategorySchema } from '@/schemas/transaction'
 import { z } from 'zod'
 import { useState } from 'react'
 import { CategorySelect } from './category-select'
-import { CategoryIcon } from './catetory-icon'
+import { CategoryIcon } from '../category/catetory-icon'
 
 export type CategoryCellProps = {
   category: z.infer<typeof CategorySchema>

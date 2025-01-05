@@ -53,7 +53,7 @@ func (q *Queries) GetCategoryById(ctx context.Context, id string) (Category, err
 }
 
 const getCategoryListByCreator = `-- name: GetCategoryListByCreator :many
-SELECT id, name, color, icon, type, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE created_by = $1 AND is_deleted = false
+SELECT id, name, color, icon, type, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE created_by = $1 AND is_deleted = false ORDER BY created_at DESC
 `
 
 func (q *Queries) GetCategoryListByCreator(ctx context.Context, createdBy pgtype.Text) ([]Category, error) {

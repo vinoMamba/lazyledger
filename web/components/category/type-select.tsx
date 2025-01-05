@@ -7,8 +7,8 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 type TypeSelectProps = {
-  value: string
-  onChange: (value: string) => void
+  value: number
+  onChange: (value: number) => void
 }
 
 export const TypeSelect = ({ value, onChange }: TypeSelectProps) => {
@@ -16,15 +16,15 @@ export const TypeSelect = ({ value, onChange }: TypeSelectProps) => {
   const [searchValue, setSearchValue] = useState('')
 
   const handleSelect = (selectValue: string) => {
-    onChange(selectValue)
+    onChange(Number(selectValue))
     setOpen(false)
   }
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-full justify-start text-left font-normal bg-sidebar hover:bg-sidebar focus-within:ring-1 focus-within:ring-ring">
-          {value === "income" ? <ArrowUpRight color="#0685f2" /> : <ArrowDownRight color="#ff5d04" />}
-          <span>{value === "income" ? "收入" : "支出"}</span>
+          {value === 1 ? <ArrowUpRight color="#0685f2" /> : <ArrowDownRight color="#ff5d04" />}
+          <span>{value === 1 ? "收入" : "支出"}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[29rem]">
@@ -38,21 +38,21 @@ export const TypeSelect = ({ value, onChange }: TypeSelectProps) => {
             <CommandEmpty>没有找到类型。</CommandEmpty>
             <CommandGroup>
               <CommandItem
-                value="income"
-                onSelect={handleSelect}
-              >
-                <div className="flex items-center gap-2">
-                  <ArrowUpRight color="#0685f2" />
-                  <span>收入</span>
-                </div>
-              </CommandItem>
-              <CommandItem
-                value="expense"
+                value="0"
                 onSelect={handleSelect}
               >
                 <div className="flex items-center gap-2">
                   <ArrowDownRight color="#ff5d04" />
                   <span>支出</span>
+                </div>
+              </CommandItem>
+              <CommandItem
+                value="1"
+                onSelect={handleSelect}
+              >
+                <div className="flex items-center gap-2">
+                  <ArrowUpRight color="#0685f2" />
+                  <span>收入</span>
                 </div>
               </CommandItem>
             </CommandGroup>

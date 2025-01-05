@@ -2,7 +2,7 @@
 
 import { useTransaction } from "@/hooks/use-transaction"
 import { Tag } from "lucide-react"
-import { CategoryIcon } from "./catetory-icon"
+import { CategoryIcon } from "../category/catetory-icon"
 import { Separator } from "../ui/separator"
 
 export const TransactionPanel = () => {

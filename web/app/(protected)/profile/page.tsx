@@ -1,9 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileCard } from "@/components/profile/profile-card";
+import { CategoryPanel } from "@/components/category/category-panel";
 
 export default function ProfilePage() {
   return (
-    <Tabs defaultValue="profile" className="m-14">
+    <Tabs defaultValue="category" className="m-14">
       <TabsList>
         <TabsTrigger value="profile" className="px-8">个人设置</TabsTrigger>
         <TabsTrigger value="category" className="px-8">分类设置</TabsTrigger>
@@ -14,7 +15,7 @@ export default function ProfilePage() {
         <ProfileCard />
       </TabsContent>
       <TabsContent value="category">
-        <div>分类设置</div>
+        <CategoryPanel />
       </TabsContent>
       <TabsContent value="tag">
         <div>标签设置</div>
