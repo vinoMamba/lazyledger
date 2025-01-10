@@ -47,9 +47,9 @@ export const EditCategoryButton = ({ category }: EditCategoryProps) => {
 
   useEffect(() => {
     if (open) {
-      form.reset()
+      form.reset(category)
     }
-  }, [open, form])
+  }, [open, form, category])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
