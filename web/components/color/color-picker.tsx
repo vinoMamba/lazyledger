@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { Palette, Check } from "lucide-react"
+import { HexColorPicker } from "react-colorful"
 
 type ColorPickerProps = {
   value: string
@@ -16,14 +16,10 @@ export const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
 
   return <Popover open={open} onOpenChange={setOpen}>
     <PopoverTrigger asChild>
-      <Palette color={value} size={16} />
+      <div className="w-4 h-4 rounded-xs" style={{ backgroundColor: value }} />
     </PopoverTrigger>
     <PopoverContent className="p-1 grid grid-cols-7 gap-1 w-[240px]">
-      {colorOptions.map(color => (
-        <span key={color} className="w-6 h-6 border rounded-full flex items-center justify-center cursor-pointer" style={{ backgroundColor: color }} onClick={() => onChange(color)} >
-          {value === color && <Check className="w-4 h-4 text-white" />}
-        </span>
-      ))}
+      <HexColorPicker color={value} onChange={onChange} />
     </PopoverContent>
   </Popover>
 }
