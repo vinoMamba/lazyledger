@@ -75,8 +75,9 @@ func (h *categoryHandler) DeleteCategory(ctx fiber.Ctx) error {
 
 func (h *categoryHandler) GetCategoryListByCreator(ctx fiber.Ctx) error {
 	userId := GetUserIdFromLocals(ctx)
+	name := ctx.Query("name")
 
-	items, err := h.categoryBiz.GetCategoryListByCreator(ctx, userId)
+	items, err := h.categoryBiz.GetCategoryListByCreator(ctx, userId, name)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),

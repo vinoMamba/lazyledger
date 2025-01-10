@@ -7,7 +7,7 @@ import { EmailDialog } from "@/components/profile/email-dialog";
 import { UsernameDialog } from "@/components/profile/username-dialog";
 import { PasswordDialog } from "@/components/profile/password-dialog";
 
-export const ProfileCard = async () => {
+export default async function ProfilePage() {
   const userInfo = await getUserInfoAction();
   const url = `${process.env.NEXT_API_URL}/upload/icon/${userInfo?.avatar}`
   return (

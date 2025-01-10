@@ -16,7 +16,7 @@ type CategoryBiz interface {
 	CreateCategory(ctx fiber.Ctx, userId string, params *req.CreateCategoryReq) error
 	UpdateCategory(ctx fiber.Ctx, userId string, params *req.UpdateCategoryReq) error
 	DeleteCategory(ctx fiber.Ctx, userId string, id string) error
-	GetCategoryListByCreator(ctx fiber.Ctx, userId string) ([]*res.CategoryItem, error)
+	GetCategoryListByCreator(ctx fiber.Ctx, userId, name string) ([]*res.CategoryItem, error)
 }
 
 type categoryBiz struct {
@@ -108,9 +108,12 @@ func (b *categoryBiz) DeleteCategory(ctx fiber.Ctx, userId string, id string) er
 	return nil
 }
 
-func (b *categoryBiz) GetCategoryListByCreator(ctx fiber.Ctx, userId string) ([]*res.CategoryItem, error) {
+func (b *categoryBiz) GetCategoryListByCreator(ctx fiber.Ctx, userId, name string) ([]*res.CategoryItem, error) {
 
-	items, err := b.Queries.GetCategoryListByCreator(ctx.Context(), pgtype.Text{String: userId, Valid: true})
+	items, err := b.Queries.GetCategoryListByCreator(ctx.Context(), repository.GetCategoryListByCreatorParams{
+		CreatedBy: pgtype.Text{String: userId, Valid: true},
+		Name:      "%" + name + "%",
+	})
 	if err != nil {
 		log.Errorf("get category list error: %v", err)
 		return nil, errors.New("internal server error")

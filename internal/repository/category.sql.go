@@ -53,11 +53,16 @@ func (q *Queries) GetCategoryById(ctx context.Context, id string) (Category, err
 }
 
 const getCategoryListByCreator = `-- name: GetCategoryListByCreator :many
-SELECT id, name, color, icon, type, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE created_by = $1 AND is_deleted = false ORDER BY created_at DESC
+SELECT id, name, color, icon, type, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE created_by = $1 AND name LIKE $2 AND is_deleted = false ORDER BY created_at DESC
 `
 
-func (q *Queries) GetCategoryListByCreator(ctx context.Context, createdBy pgtype.Text) ([]Category, error) {
-	rows, err := q.db.Query(ctx, getCategoryListByCreator, createdBy)
+type GetCategoryListByCreatorParams struct {
+	CreatedBy pgtype.Text
+	Name      string
+}
+
+func (q *Queries) GetCategoryListByCreator(ctx context.Context, arg GetCategoryListByCreatorParams) ([]Category, error) {
+	rows, err := q.db.Query(ctx, getCategoryListByCreator, arg.CreatedBy, arg.Name)
 	if err != nil {
 		return nil, err
 	}

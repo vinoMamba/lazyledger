@@ -3,11 +3,15 @@
 import { CategoryListSchema } from "@/schemas/category"
 import { cookies } from "next/headers"
 
+export type SearchParams = {
+  name?: string
+}
 
-export const getCategoryListAction = async () => {
+
+export const getCategoryListAction = async ({ name = '' }: SearchParams) => {
   try {
     const token = (await cookies()).get('token')?.value
-    const result = await fetch(process.env.NEXT_API_URL + "/category/list", {
+    const result = await fetch(`${process.env.NEXT_API_URL}/category/list?name=${name}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

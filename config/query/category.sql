@@ -30,4 +30,4 @@ updated_at = $3
 WHERE id = $1;
 
 -- name: GetCategoryListByCreator :many
-SELECT * FROM categories WHERE created_by = $1 AND is_deleted = false ORDER BY created_at DESC;
+SELECT * FROM categories WHERE created_by = $1 AND name LIKE $2 AND is_deleted = false ORDER BY created_at DESC;
