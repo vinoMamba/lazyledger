@@ -11,10 +11,6 @@ const tabOptions = [
     value: "category"
   },
   {
-    label: "标签设置",
-    value: "tag"
-  },
-  {
     label: "大模型设置",
     value: "model"
   }

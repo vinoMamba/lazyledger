@@ -55,7 +55,7 @@ export const AppSidebarFooter = async () => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <Link href="/profile">
+                  <Link href="/settings/profile">
                     <DropdownMenuItem>
                       <Settings />
                       个人设置
