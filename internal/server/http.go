@@ -34,6 +34,7 @@ func NewHttpServer(
 	userBiz biz.UserBiz,
 	jwt *jwt.JWT,
 	categoryHandler handler.CategoryHandler,
+	tagHandler handler.TagHandler,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
 		StructValidator: &structValidator{validate: validator.New()},
@@ -59,6 +60,13 @@ func NewHttpServer(
 	category.Put("", categoryHandler.UpdateCategory)
 	category.Delete("/:categoryId", categoryHandler.DeleteCategory)
 	category.Get("/list", categoryHandler.GetCategoryListByCreator)
+
+	tag := app.Group("/tag")
+	tag.Use(middleware.JWTMiddleware(jwt, userBiz))
+	tag.Post("", tagHandler.CreateTag)
+	tag.Put("/:tagId", tagHandler.UpdateTag)
+	tag.Delete("/:tagId", tagHandler.DeleteTag)
+	tag.Get("/list", tagHandler.GetTagListByCreator)
 
 	app.Use(middleware.NotFound())
 	return app

@@ -12,6 +12,7 @@ var ProviderSet = wire.NewSet(
 	NewBiz,
 	NewUserBiz,
 	NewCategoryBiz,
+	NewTagBiz,
 )
 
 type Biz struct {

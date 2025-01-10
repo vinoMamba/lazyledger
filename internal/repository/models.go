@@ -22,6 +22,17 @@ type Category struct {
 	UpdatedAt pgtype.Timestamp
 }
 
+type Tag struct {
+	ID        string
+	Name      string
+	Color     string
+	IsDeleted pgtype.Bool
+	CreatedBy pgtype.Text
+	CreatedAt pgtype.Timestamp
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
+}
+
 type User struct {
 	ID        string
 	Username  string

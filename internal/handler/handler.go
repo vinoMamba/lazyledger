@@ -10,6 +10,7 @@ import (
 var ProviderSet = wire.NewSet(
 	NewUserHandler,
 	NewCategoryHandler,
+	NewTagHandler,
 )
 
 func GetUserIdFromLocals(c fiber.Ctx) string {
