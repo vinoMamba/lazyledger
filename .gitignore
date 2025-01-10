@@ -1,3 +1,4 @@
 bin/*
 storage/logs/*
 storage/icons/*
+postgres-data/*
