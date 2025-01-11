@@ -40,6 +40,7 @@ func (b *transactionBiz) CreateTransaction(ctx fiber.Ctx, userId string, params 
 		ID:         tId,
 		Name:       params.Name,
 		Amount:     int32(params.Amount),
+		Date:       pgtype.Timestamp{Time: params.Date, Valid: true},
 		CategoryID: params.CategoryId,
 		CreatedBy:  pgtype.Text{String: userId, Valid: true},
 		CreatedAt:  pgtype.Timestamp{Time: time.Now(), Valid: true},
@@ -67,6 +68,7 @@ func (b *transactionBiz) UpdateTransaction(ctx fiber.Ctx, userId string, params 
 		ID:         tx.ID,
 		Name:       params.Name,
 		Amount:     int32(params.Amount),
+		Date:       pgtype.Timestamp{Time: params.Date, Valid: true},
 		CategoryID: params.CategoryId,
 		UpdatedBy:  pgtype.Text{String: userId, Valid: true},
 		UpdatedAt:  pgtype.Timestamp{Time: time.Now(), Valid: true},
@@ -124,6 +126,7 @@ func (b *transactionBiz) GetTransactionList(ctx fiber.Ctx, userId string) ([]*re
 			ID:         tx.ID,
 			Name:       tx.Name,
 			Amount:     int(tx.Amount),
+			Date:       tx.Date.Time,
 			CategoryID: tx.CategoryID,
 		})
 	}

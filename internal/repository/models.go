@@ -36,6 +36,7 @@ type Tag struct {
 type Transaction struct {
 	ID         string
 	Name       string
+	Date       pgtype.Timestamp
 	Amount     int32
 	CategoryID string
 	IsDeleted  pgtype.Bool
