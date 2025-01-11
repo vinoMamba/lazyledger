@@ -33,6 +33,18 @@ type Tag struct {
 	UpdatedAt pgtype.Timestamp
 }
 
+type Transaction struct {
+	ID         string
+	Name       string
+	Amount     int32
+	CategoryID string
+	IsDeleted  pgtype.Bool
+	CreatedBy  pgtype.Text
+	CreatedAt  pgtype.Timestamp
+	UpdatedBy  pgtype.Text
+	UpdatedAt  pgtype.Timestamp
+}
+
 type User struct {
 	ID        string
 	Username  string

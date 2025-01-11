@@ -31,7 +31,9 @@ func NewApp(viperViper *viper.Viper) (*fiber.App, func(), error) {
 	categoryHandler := handler.NewCategoryHandler(categoryBiz)
 	tagBiz := biz.NewTagBiz(bizBiz)
 	tagHandler := handler.NewTagHandler(tagBiz)
-	app := server.NewHttpServer(userHandler, userBiz, jwtJWT, categoryHandler, tagHandler)
+	transactionBiz := biz.NewTransactionBiz(bizBiz)
+	transactionHandler := handler.NewTransactionHandler(transactionBiz)
+	app := server.NewHttpServer(userHandler, userBiz, jwtJWT, categoryHandler, tagHandler, transactionHandler)
 	return app, func() {
 	}, nil
 }

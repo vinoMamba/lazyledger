@@ -11,6 +11,7 @@ var ProviderSet = wire.NewSet(
 	NewUserHandler,
 	NewCategoryHandler,
 	NewTagHandler,
+	NewTransactionHandler,
 )
 
 func GetUserIdFromLocals(c fiber.Ctx) string {
