@@ -1,29 +1,28 @@
 "use server"
-
 import { resErr, resOk } from "@/lib/response"
 import { revalidateTag } from "next/cache"
 import { cookies } from "next/headers"
 
-export async function updateAvatarAction(formData: FormData) {
+export async function deleteTransactionAction(id: string) {
   try {
     const token = (await cookies()).get('token')?.value
-    const result = await fetch(`${process.env.NEXT_API_URL}/user/avatar`, {
-      method: 'PUT',
+    const result = await fetch(`${process.env.NEXT_API_URL}/transaction/${id}`, {
+      method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
-      body: formData,
     })
     const json = await result.json()
     if (result.status === 200) {
-      revalidateTag("getUserInfo")
-      return resOk("上传头像成功")
+      revalidateTag("getTransactionList")
+      return resOk("删除账单成功")
     } else {
       return resErr(json.message)
     }
   } catch (error) {
     console.error(error)
-    return resErr("上传头像失败")
+    return resErr("删除账单失败")
   }
 }
 

@@ -14,9 +14,6 @@ export async function updateUsernameAction(username: string) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ username }),
-      next: {
-        tags: ['getUserInfo']
-      }
     })
     const json = await result.json()
     if (result.status === 200) {

@@ -25,9 +25,6 @@ export async function updatePasswordAction(value: z.infer<typeof UpdateUserPassw
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(validateValue.data),
-      next: {
-        tags: ['getUserInfo']
-      }
     })
     const json = await result.json()
     if (result.status === 200) {

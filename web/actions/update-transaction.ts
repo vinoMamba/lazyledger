@@ -1,21 +1,21 @@
 "use server"
 import { resErr, resOk } from "@/lib/response"
-import { CreateTagSchema } from "@/schemas/tag"
+import { UpdateTransactionSchema } from "@/schemas/transaction"
 import { revalidateTag } from "next/cache"
 import { cookies } from "next/headers"
 import { z } from "zod"
 
-export async function addTagAction(value: z.infer<typeof CreateTagSchema>) {
-  const validateValue = CreateTagSchema.safeParse(value)
+export async function updateTransactionAction(value: z.infer<typeof UpdateTransactionSchema>) {
+  const validateValue = UpdateTransactionSchema.safeParse(value)
 
   if (!validateValue.success) {
-    return resErr("添加标签参数验证失败")
+    return resErr("更新账单参数验证失败")
   }
 
   try {
     const token = (await cookies()).get('token')?.value
-    const result = await fetch(`${process.env.NEXT_API_URL}/tag`, {
-      method: 'POST',
+    const result = await fetch(`${process.env.NEXT_API_URL}/transaction`, {
+      method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -24,14 +24,14 @@ export async function addTagAction(value: z.infer<typeof CreateTagSchema>) {
     })
     const json = await result.json()
     if (result.status === 200) {
-      revalidateTag("getTagList")
-      return resOk("添加标签成功")
+      revalidateTag("getTransactionList")
+      return resOk("更新账单成功")
     } else {
       return resErr(json.message)
     }
   } catch (error) {
     console.error(error)
-    return resErr("添加标签失败")
+    return resErr("更新账单失败")
   }
 }
 

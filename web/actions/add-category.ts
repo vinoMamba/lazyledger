@@ -21,9 +21,6 @@ export async function addCategoryAction(value: z.infer<typeof CreateCategorySche
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(validateValue.data),
-      next: {
-        tags: ['getUserInfo']
-      }
     })
     const json = await result.json()
     if (result.status === 200) {

@@ -14,9 +14,6 @@ export async function updateEmailAction(email: string) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ email }),
-      next: {
-        tags: ['getUserInfo']
-      }
     })
     const json = await result.json()
     if (result.status === 200) {
