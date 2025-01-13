@@ -74,8 +74,8 @@ func NewHttpServer(
 	transaction.Post("", transactionHandler.CreateTransaction)
 	transaction.Put("/:transactionId", transactionHandler.UpdateTransaction)
 	transaction.Delete("/:transactionId", transactionHandler.DeleteTransaction)
-	transaction.Get("/:transactionId", transactionHandler.GetTransaction)
 	transaction.Get("/list", transactionHandler.GetTransactionList)
+	transaction.Get("/info", transactionHandler.GetTransaction)
 
 	app.Use(middleware.NotFound())
 	return app

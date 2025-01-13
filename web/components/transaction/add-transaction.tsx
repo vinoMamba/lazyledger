@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -11,27 +11,23 @@ import { AddTransactionSchema } from "@/schemas/transaction"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { useHotkeys } from "react-hotkeys-hook"
 import { DescriptionInput } from "./description-input"
-import { TypeSelect } from "../category/type-select"
 import { AmountInput } from "./amount-input"
 import { DatePicker } from "./date-picker"
-import { TagFormItem } from "./tag-form-item"
-import { CategoryFormItem } from "./category-form-item"
+import { CategorySelect } from "@/components/category/category-select"
+import { addTransactionAction } from "@/actions/add-transaction"
+import { toast } from "sonner"
+
 
 export const AddTransaction = () => {
   const [open, setOpen] = useState(false)
-
   useHotkeys('alt+n', () => setOpen(true))
-
-
   const form = useForm<z.infer<typeof AddTransactionSchema>>({
     resolver: zodResolver(AddTransactionSchema),
     defaultValues: {
       amount: 0.00,
       date: "",
-      description: "",
-      category: null,
-      type: "expense",
-      tags: []
+      name: "",
+      categoryId: "",
     },
   })
 
@@ -41,11 +37,15 @@ export const AddTransaction = () => {
     }
   }, [open, form])
 
-  const onSubmit = form.handleSubmit(values => {
-    console.log(values)
+  const onSubmit = form.handleSubmit(async (values) => {
+    const res = await addTransactionAction(values)
+    if (res.code === 200) {
+      toast.success('添加成功')
+      setOpen(false)
+    } else {
+      toast.error(res.message)
+    }
   })
-
-
 
   return (
     <div>
@@ -56,17 +56,18 @@ export const AddTransaction = () => {
         <DialogContent className="top-1/4 shadow-2xl border bg-sidebar">
           <DialogHeader>
             <DialogTitle>添加交易</DialogTitle>
+            <DialogDescription></DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={onSubmit}>
               <div className=" space-y-4">
                 <FormField
                   control={form.control}
-                  name="type"
+                  name="date"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <TypeSelect {...field} />
+                        <DatePicker {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -74,7 +75,19 @@ export const AddTransaction = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="categoryId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <CategorySelect {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -91,42 +104,6 @@ export const AddTransaction = () => {
                     <FormItem>
                       <FormControl>
                         <AmountInput {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <DatePicker {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <CategoryFormItem {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <TagFormItem {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

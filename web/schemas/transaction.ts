@@ -21,6 +21,7 @@ export const TransactionSchema = z.object({
   date: z.string().datetime(),
   name: z.string(),
   categoryId: z.string(),
+  type: z.number(),
 })
 
 export const TransactionListSchema = z.array(TransactionSchema)

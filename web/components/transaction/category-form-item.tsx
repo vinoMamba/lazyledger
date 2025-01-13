@@ -1,30 +1,33 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { CategorySchema } from "@/schemas/transaction"
 import { Pizza } from "lucide-react"
-import { z } from "zod"
 import { useState } from "react"
-import { CategorySelect } from "./category-select"
+import { CategorySelect } from "../category/category-select"
 import { cn } from "@/lib/utils"
+import { CategoryItemSchema } from "@/schemas/category"
+import { z } from "zod"
 
 
 type CategoryFormItemProps = {
-  value: z.infer<typeof CategorySchema> | null
-  onChange: (value: z.infer<typeof CategorySchema>) => void
+  value: string
+  onChange: (value: string) => void
 }
 
 
 export const CategoryFormItem = ({ value, onChange }: CategoryFormItemProps) => {
   const [innerCategory, setInnerCategory] = useState(value)
 
-  const handleChange = (value: z.infer<typeof CategorySchema>) => {
+  const handleChange = (value: z.infer<typeof CategoryItemSchema>) => {
     setInnerCategory(value)
     onChange(value)
   }
 
   return (
-    <CategorySelect value={innerCategory} onChange={handleChange}>
+    <CategorySelect
+      value={innerCategory}
+      onChange={handleChange}
+    >
       <Button variant="outline" className={cn(
         "w-full justify-start text-left font-normal bg-sidebar hover:bg-sidebar focus-within:ring-1 focus-within:ring-ring",
       )}>

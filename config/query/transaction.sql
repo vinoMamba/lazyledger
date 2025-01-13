@@ -10,7 +10,10 @@ INSERT INTO transactions (
 ) VALUES ($1, $2, $3, $4, $5, $6, $7);
 
 -- name: GetTransactionById :one
-SELECT * FROM transactions WHERE id = $1 AND is_deleted = false LIMIT 1;
+SELECT t.id, t.name, t.amount, t.date, c.id AS category_id, c.type 
+FROM transactions t 
+LEFT JOIN categories c ON t.category_id = c.id
+WHERE t.id = $1 AND t.is_deleted = false LIMIT 1;
 
 -- name: UpdateTransaction :exec
 UPDATE transactions SET 
@@ -30,4 +33,7 @@ updated_at = $3
 WHERE id = $1;
 
 -- name: GetTransactionListByCreator :many
-SELECT * FROM transactions WHERE created_by = $1 AND is_deleted = false ORDER BY date DESC;
+SELECT t.id, t.name, t.amount, t.date, c.id AS category_id, c.type 
+FROM transactions t 
+LEFT JOIN categories c ON t.category_id = c.id
+WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC;

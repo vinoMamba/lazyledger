@@ -8,8 +8,10 @@ import { ResizablePanelGroup } from "@/components/ui/resizable";
 import { TransactionTable } from "@/components/transaction/transaction-table";
 import { AddTransaction } from "@/components/transaction/add-transaction";
 import { TransactionPanel } from "@/components/transaction/transaction-panel";
+import { getTransactionListAction } from "@/actions/get-transaction-list";
 
-export default function WorkbenchPage() {
+export default async function WorkbenchPage() {
+  const transactions = await getTransactionListAction()
   return (
     <main className="h-screen flex flex-col">
       <header className={cn("w-full bg-sidebar flex justify-between items-center h-14 border-b p-2")}>
@@ -40,7 +42,7 @@ export default function WorkbenchPage() {
           className="w-full h-full"
         >
           <ResizablePanel defaultSize={50}>
-            <TransactionTable />
+            <TransactionTable transactions={transactions} />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={50}>

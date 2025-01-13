@@ -1,8 +1,8 @@
-import { CategorySchema } from "@/schemas/transaction"
 import { z } from "zod"
+import { CategoryItemSchema } from "@/schemas/category"
 
 type CategoryIconProps = {
-  category: z.infer<typeof CategorySchema> | null
+  category: z.infer<typeof CategoryItemSchema> | null
 }
 export const CategoryIcon = ({ category }: CategoryIconProps) => {
   if (!category) return null

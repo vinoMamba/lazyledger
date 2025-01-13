@@ -23,6 +23,7 @@ func NewTransactionHandler(transactionBiz biz.TransactionBiz) TransactionHandler
 }
 
 func (h *transactionHandler) CreateTransaction(ctx fiber.Ctx) error {
+
 	userId := GetUserIdFromLocals(ctx)
 	params := new(req.CreateTransactionReq)
 	if err := ctx.Bind().JSON(params); err != nil {
@@ -76,7 +77,7 @@ func (h *transactionHandler) DeleteTransaction(ctx fiber.Ctx) error {
 
 func (h *transactionHandler) GetTransaction(ctx fiber.Ctx) error {
 	userId := GetUserIdFromLocals(ctx)
-	id := ctx.Params("id")
+	id := ctx.Query("id")
 
 	tx, err := h.transactionBiz.GetTransaction(ctx, userId, id)
 	if err != nil {
@@ -88,6 +89,7 @@ func (h *transactionHandler) GetTransaction(ctx fiber.Ctx) error {
 }
 
 func (h *transactionHandler) GetTransactionList(ctx fiber.Ctx) error {
+
 	userId := GetUserIdFromLocals(ctx)
 
 	txs, err := h.transactionBiz.GetTransactionList(ctx, userId)

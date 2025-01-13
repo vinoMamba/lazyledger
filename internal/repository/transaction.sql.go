@@ -31,51 +31,67 @@ func (q *Queries) DeleteTransaction(ctx context.Context, arg DeleteTransactionPa
 }
 
 const getTransactionById = `-- name: GetTransactionById :one
-SELECT id, name, date, amount, category_id, is_deleted, created_by, created_at, updated_by, updated_at FROM transactions WHERE id = $1 AND is_deleted = false LIMIT 1
+SELECT t.id, t.name, t.amount, t.date, c.id AS category_id, c.type 
+FROM transactions t 
+LEFT JOIN categories c ON t.category_id = c.id
+WHERE t.id = $1 AND t.is_deleted = false LIMIT 1
 `
 
-func (q *Queries) GetTransactionById(ctx context.Context, id string) (Transaction, error) {
+type GetTransactionByIdRow struct {
+	ID         string
+	Name       string
+	Amount     int32
+	Date       pgtype.Timestamp
+	CategoryID pgtype.Text
+	Type       pgtype.Int2
+}
+
+func (q *Queries) GetTransactionById(ctx context.Context, id string) (GetTransactionByIdRow, error) {
 	row := q.db.QueryRow(ctx, getTransactionById, id)
-	var i Transaction
+	var i GetTransactionByIdRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Date,
 		&i.Amount,
+		&i.Date,
 		&i.CategoryID,
-		&i.IsDeleted,
-		&i.CreatedBy,
-		&i.CreatedAt,
-		&i.UpdatedBy,
-		&i.UpdatedAt,
+		&i.Type,
 	)
 	return i, err
 }
 
 const getTransactionListByCreator = `-- name: GetTransactionListByCreator :many
-SELECT id, name, date, amount, category_id, is_deleted, created_by, created_at, updated_by, updated_at FROM transactions WHERE created_by = $1 AND is_deleted = false ORDER BY date DESC
+SELECT t.id, t.name, t.amount, t.date, c.id AS category_id, c.type 
+FROM transactions t 
+LEFT JOIN categories c ON t.category_id = c.id
+WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC
 `
 
-func (q *Queries) GetTransactionListByCreator(ctx context.Context, createdBy pgtype.Text) ([]Transaction, error) {
+type GetTransactionListByCreatorRow struct {
+	ID         string
+	Name       string
+	Amount     int32
+	Date       pgtype.Timestamp
+	CategoryID pgtype.Text
+	Type       pgtype.Int2
+}
+
+func (q *Queries) GetTransactionListByCreator(ctx context.Context, createdBy pgtype.Text) ([]GetTransactionListByCreatorRow, error) {
 	rows, err := q.db.Query(ctx, getTransactionListByCreator, createdBy)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Transaction
+	var items []GetTransactionListByCreatorRow
 	for rows.Next() {
-		var i Transaction
+		var i GetTransactionListByCreatorRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
-			&i.Date,
 			&i.Amount,
+			&i.Date,
 			&i.CategoryID,
-			&i.IsDeleted,
-			&i.CreatedBy,
-			&i.CreatedAt,
-			&i.UpdatedBy,
-			&i.UpdatedAt,
+			&i.Type,
 		); err != nil {
 			return nil, err
 		}

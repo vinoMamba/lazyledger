@@ -11,7 +11,6 @@ export async function addTransactionAction(value: z.infer<typeof AddTransactionS
   if (!validateValue.success) {
     return resErr("添加账单参数验证失败")
   }
-
   try {
     const token = (await cookies()).get('token')?.value
     const result = await fetch(`${process.env.NEXT_API_URL}/transaction`, {

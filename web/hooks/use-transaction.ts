@@ -1,13 +1,13 @@
-import { Transaction } from "@/components/transaction/transaction-table"
+import { TransactionSchema } from "@/schemas/transaction"
 import { create } from "zustand"
-
+import { z } from "zod"
 
 type State = {
-  currentTransaction: Transaction | null
+  currentTransaction: z.infer<typeof TransactionSchema> | null
 }
 
 type Actions = {
-  setCurrentTransaction: (transaction: Transaction) => void
+  setCurrentTransaction: (transaction: z.infer<typeof TransactionSchema>) => void
 }
 
 export const useTransaction = create<State & Actions>()((set) => ({

@@ -109,11 +109,14 @@ func (b *transactionBiz) GetTransaction(ctx fiber.Ctx, userId string, id string)
 		ID:         tx.ID,
 		Name:       tx.Name,
 		Amount:     int(tx.Amount),
-		CategoryID: tx.CategoryID,
+		CategoryID: tx.CategoryID.String,
+		Type:       tx.Type.Int16,
+		Date:       tx.Date.Time,
 	}, nil
 }
 
 func (b *transactionBiz) GetTransactionList(ctx fiber.Ctx, userId string) ([]*res.TransactionItem, error) {
+
 	txs, err := b.Queries.GetTransactionListByCreator(ctx.Context(), pgtype.Text{String: userId, Valid: true})
 	if err != nil {
 		log.Errorf("get transaction list by creator error: %v", err)
@@ -127,7 +130,8 @@ func (b *transactionBiz) GetTransactionList(ctx fiber.Ctx, userId string) ([]*re
 			Name:       tx.Name,
 			Amount:     int(tx.Amount),
 			Date:       tx.Date.Time,
-			CategoryID: tx.CategoryID,
+			CategoryID: tx.CategoryID.String,
+			Type:       tx.Type.Int16,
 		})
 	}
 

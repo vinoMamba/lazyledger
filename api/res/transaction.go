@@ -7,5 +7,6 @@ type TransactionItem struct {
 	Name       string    `json:"name"`
 	Amount     int       `json:"amount"`
 	CategoryID string    `json:"categoryId"`
+	Type       int16     `json:"type"`
 	Date       time.Time `json:"date"`
 }
