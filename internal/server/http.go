@@ -72,7 +72,7 @@ func NewHttpServer(
 	transaction := app.Group("/transaction")
 	transaction.Use(middleware.JWTMiddleware(jwt, userBiz))
 	transaction.Post("", transactionHandler.CreateTransaction)
-	transaction.Put("/:transactionId", transactionHandler.UpdateTransaction)
+	transaction.Put("", transactionHandler.UpdateTransaction)
 	transaction.Delete("/:transactionId", transactionHandler.DeleteTransaction)
 	transaction.Get("/list", transactionHandler.GetTransactionList)
 	transaction.Get("/info", transactionHandler.GetTransaction)

@@ -43,7 +43,6 @@ const columns: ColumnDef<Transaction>[] = [
     accessorKey: 'categoryId',
     header: '分类',
     cell: ({ row }) => {
-      console.log(row.original)
       return <CategoryCell value={row.original.categoryId} />
     }
   },
@@ -65,7 +64,10 @@ export const TransactionTable = ({ transactions }: TransactionTableProps) => {
 
   useEffect(() => {
     setData(transactions)
-  }, [transactions])
+    if (transactions.length > 0) {
+      setCurrentTransaction(transactions[0])
+    }
+  }, [transactions, setCurrentTransaction])
 
   const table = useReactTable({
     data,
