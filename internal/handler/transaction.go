@@ -8,7 +8,11 @@ import (
 
 type TransactionHandler interface {
 	CreateTransaction(ctx fiber.Ctx) error
-	UpdateTransaction(ctx fiber.Ctx) error
+	UpdateTransactionName(ctx fiber.Ctx) error
+	UpdateTransactionAmount(ctx fiber.Ctx) error
+	UpdateTransactionDate(ctx fiber.Ctx) error
+	UpdateTransactionCategory(ctx fiber.Ctx) error
+	UpdateTransactionRemark(ctx fiber.Ctx) error
 	DeleteTransaction(ctx fiber.Ctx) error
 	GetTransaction(ctx fiber.Ctx) error
 	GetTransactionList(ctx fiber.Ctx) error
@@ -42,16 +46,90 @@ func (h *transactionHandler) CreateTransaction(ctx fiber.Ctx) error {
 	})
 }
 
-func (h *transactionHandler) UpdateTransaction(ctx fiber.Ctx) error {
+func (h *transactionHandler) UpdateTransactionName(ctx fiber.Ctx) error {
 	userId := GetUserIdFromLocals(ctx)
-	params := new(req.UpdateTransactionReq)
+	params := new(req.UpdateTransactionNameReq)
 	if err := ctx.Bind().JSON(params); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
 		})
 	}
 
-	if err := h.transactionBiz.UpdateTransaction(ctx, userId, params); err != nil {
+	if err := h.transactionBiz.UpdateTransactionName(ctx, userId, params); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+func (h *transactionHandler) UpdateTransactionAmount(ctx fiber.Ctx) error {
+	userId := GetUserIdFromLocals(ctx)
+	params := new(req.UpdateTransactionAmountReq)
+	if err := ctx.Bind().JSON(params); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := h.transactionBiz.UpdateTransactionAmount(ctx, userId, params); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+
+func (h *transactionHandler) UpdateTransactionDate(ctx fiber.Ctx) error {
+	userId := GetUserIdFromLocals(ctx)
+	params := new(req.UpdateTransactionDateReq)
+	if err := ctx.Bind().JSON(params); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := h.transactionBiz.UpdateTransactionDate(ctx, userId, params); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+func (h *transactionHandler) UpdateTransactionCategory(ctx fiber.Ctx) error {
+	userId := GetUserIdFromLocals(ctx)
+	params := new(req.UpdateTransactionCategoryReq)
+	if err := ctx.Bind().JSON(params); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := h.transactionBiz.UpdateTransactionCategory(ctx, userId, params); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
+
+func (h *transactionHandler) UpdateTransactionRemark(ctx fiber.Ctx) error {
+	userId := GetUserIdFromLocals(ctx)
+	params := new(req.UpdateTransactionRemarkReq)
+	if err := ctx.Bind().JSON(params); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := h.transactionBiz.UpdateTransactionRemark(ctx, userId, params); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),
 		})

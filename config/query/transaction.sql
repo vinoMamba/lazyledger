@@ -27,6 +27,43 @@ updated_by = $7,
 updated_at = $8
 WHERE id = $1;
 
+
+-- name: UpdateTransactionName :exec
+UPDATE transactions SET 
+name = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1;
+
+-- name: UpdateTransactionAmount :exec
+UPDATE transactions SET 
+amount = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1;
+
+-- name: UpdateTransactionCategory :exec
+UPDATE transactions SET 
+category_id = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1;
+
+-- name: UpdateTransactionRemark :exec
+UPDATE transactions SET 
+remark = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1;
+
+-- name: UpdateTransactionDate :exec
+UPDATE transactions SET 
+date = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1;
+
+
 -- name: DeleteTransaction :exec
 UPDATE transactions SET 
 is_deleted = true,
@@ -38,4 +75,4 @@ WHERE id = $1;
 SELECT t.id, t.name, t.amount, t.date, t.remark, c.id AS category_id, c.type 
 FROM transactions t 
 LEFT JOIN categories c ON t.category_id = c.id
-WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC;
+WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC, t.created_at DESC;

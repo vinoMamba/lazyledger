@@ -64,10 +64,10 @@ export const TransactionTable = ({ transactions }: TransactionTableProps) => {
 
   useEffect(() => {
     setData(transactions)
-    if (transactions.length > 0) {
+    if (transactions.length > 0 && !currentTransaction ) {
       setCurrentTransaction(transactions[0])
     }
-  }, [transactions, setCurrentTransaction])
+  }, [transactions, setCurrentTransaction, currentTransaction])
 
   const table = useReactTable({
     data,

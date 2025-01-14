@@ -15,7 +15,11 @@ import (
 
 type TransactionBiz interface {
 	CreateTransaction(ctx fiber.Ctx, userId string, params *req.CreateTransactionReq) error
-	UpdateTransaction(ctx fiber.Ctx, userId string, params *req.UpdateTransactionReq) error
+	UpdateTransactionName(ctx fiber.Ctx, userId string, params *req.UpdateTransactionNameReq) error
+	UpdateTransactionAmount(ctx fiber.Ctx, userId string, params *req.UpdateTransactionAmountReq) error
+	UpdateTransactionDate(ctx fiber.Ctx, userId string, params *req.UpdateTransactionDateReq) error
+	UpdateTransactionCategory(ctx fiber.Ctx, userId string, params *req.UpdateTransactionCategoryReq) error
+	UpdateTransactionRemark(ctx fiber.Ctx, userId string, params *req.UpdateTransactionRemarkReq) error
 	DeleteTransaction(ctx fiber.Ctx, userId string, id string) error
 	GetTransaction(ctx fiber.Ctx, userId string, id string) (*res.TransactionItem, error)
 	GetTransactionList(ctx fiber.Ctx, userId string) ([]*res.TransactionItem, error)
@@ -60,7 +64,57 @@ func (b *transactionBiz) CreateTransaction(ctx fiber.Ctx, userId string, params 
 	return nil
 }
 
-func (b *transactionBiz) UpdateTransaction(ctx fiber.Ctx, userId string, params *req.UpdateTransactionReq) error {
+func (b *transactionBiz) UpdateTransactionName(ctx fiber.Ctx, userId string, params *req.UpdateTransactionNameReq) error {
+
+	tx, err := b.Queries.GetTransactionById(ctx.Context(), params.ID)
+	if err != nil {
+		log.Errorf("get transaction by id error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	if tx.ID == "" {
+		return errors.New("transaction not found")
+	}
+
+	if err := b.Queries.UpdateTransactionName(ctx.Context(), repository.UpdateTransactionNameParams{
+		ID:        tx.ID,
+		Name:      params.Name,
+		UpdatedBy: pgtype.Text{String: userId, Valid: true},
+		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+	}); err != nil {
+		log.Errorf("update transaction error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	return nil
+}
+
+func (b *transactionBiz) UpdateTransactionAmount(ctx fiber.Ctx, userId string, params *req.UpdateTransactionAmountReq) error {
+
+	tx, err := b.Queries.GetTransactionById(ctx.Context(), params.ID)
+	if err != nil {
+		log.Errorf("get transaction by id error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	if tx.ID == "" {
+		return errors.New("transaction not found")
+	}
+
+	if err := b.Queries.UpdateTransactionAmount(ctx.Context(), repository.UpdateTransactionAmountParams{
+		ID:        tx.ID,
+		Amount:    pgtype.Numeric{Int: big.NewInt(int64(params.Amount * 100)), Exp: -2, Valid: true},
+		UpdatedBy: pgtype.Text{String: userId, Valid: true},
+		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+	}); err != nil {
+		log.Errorf("update transaction error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	return nil
+}
+
+func (b *transactionBiz) UpdateTransactionDate(ctx fiber.Ctx, userId string, params *req.UpdateTransactionDateReq) error {
 
 	tx, err := b.Queries.GetTransactionById(ctx.Context(), params.ID)
 	if err != nil {
@@ -78,15 +132,61 @@ func (b *transactionBiz) UpdateTransaction(ctx fiber.Ctx, userId string, params 
 		return errors.New("invalid date format")
 	}
 
-	if err := b.Queries.UpdateTransaction(ctx.Context(), repository.UpdateTransactionParams{
+	if err := b.Queries.UpdateTransactionDate(ctx.Context(), repository.UpdateTransactionDateParams{
+		ID:        tx.ID,
+		Date:      pgtype.Timestamp{Time: date, Valid: true},
+		UpdatedBy: pgtype.Text{String: userId, Valid: true},
+		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+	}); err != nil {
+		log.Errorf("update transaction error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	return nil
+}
+
+func (b *transactionBiz) UpdateTransactionCategory(ctx fiber.Ctx, userId string, params *req.UpdateTransactionCategoryReq) error {
+
+	tx, err := b.Queries.GetTransactionById(ctx.Context(), params.ID)
+	if err != nil {
+		log.Errorf("get transaction by id error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	if tx.ID == "" {
+		return errors.New("transaction not found")
+	}
+
+	if err := b.Queries.UpdateTransactionCategory(ctx.Context(), repository.UpdateTransactionCategoryParams{
 		ID:         tx.ID,
-		Name:       params.Name,
-		Amount:     pgtype.Numeric{Int: big.NewInt(int64(params.Amount * 100)), Exp: -2, Valid: true},
-		Date:       pgtype.Timestamp{Time: date, Valid: true},
-		Remark:     pgtype.Text{String: params.Remark, Valid: true},
 		CategoryID: params.CategoryId,
 		UpdatedBy:  pgtype.Text{String: userId, Valid: true},
 		UpdatedAt:  pgtype.Timestamp{Time: time.Now(), Valid: true},
+	}); err != nil {
+		log.Errorf("update transaction error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	return nil
+}
+
+func (b *transactionBiz) UpdateTransactionRemark(ctx fiber.Ctx, userId string, params *req.UpdateTransactionRemarkReq) error {
+
+	tx, err := b.Queries.GetTransactionById(ctx.Context(), params.ID)
+	if err != nil {
+		log.Errorf("get transaction by id error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	if tx.ID == "" {
+		return errors.New("transaction not found")
+	}
+
+	if err := b.Queries.UpdateTransactionRemark(ctx.Context(), repository.UpdateTransactionRemarkParams{
+		ID:        tx.ID,
+		Remark:    pgtype.Text{String: params.Remark, Valid: true},
+		UpdatedBy: pgtype.Text{String: userId, Valid: true},
+		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
 	}); err != nil {
 		log.Errorf("update transaction error: %v", err)
 		return errors.New("internal server error")

@@ -66,7 +66,7 @@ const getTransactionListByCreator = `-- name: GetTransactionListByCreator :many
 SELECT t.id, t.name, t.amount, t.date, t.remark, c.id AS category_id, c.type 
 FROM transactions t 
 LEFT JOIN categories c ON t.category_id = c.id
-WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC
+WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC, t.created_at DESC
 `
 
 type GetTransactionListByCreatorRow struct {
@@ -176,6 +176,131 @@ func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionPa
 		arg.Date,
 		arg.Remark,
 		arg.CategoryID,
+		arg.UpdatedBy,
+		arg.UpdatedAt,
+	)
+	return err
+}
+
+const updateTransactionAmount = `-- name: UpdateTransactionAmount :exec
+UPDATE transactions SET 
+amount = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1
+`
+
+type UpdateTransactionAmountParams struct {
+	ID        string
+	Amount    pgtype.Numeric
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
+}
+
+func (q *Queries) UpdateTransactionAmount(ctx context.Context, arg UpdateTransactionAmountParams) error {
+	_, err := q.db.Exec(ctx, updateTransactionAmount,
+		arg.ID,
+		arg.Amount,
+		arg.UpdatedBy,
+		arg.UpdatedAt,
+	)
+	return err
+}
+
+const updateTransactionCategory = `-- name: UpdateTransactionCategory :exec
+UPDATE transactions SET 
+category_id = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1
+`
+
+type UpdateTransactionCategoryParams struct {
+	ID         string
+	CategoryID string
+	UpdatedBy  pgtype.Text
+	UpdatedAt  pgtype.Timestamp
+}
+
+func (q *Queries) UpdateTransactionCategory(ctx context.Context, arg UpdateTransactionCategoryParams) error {
+	_, err := q.db.Exec(ctx, updateTransactionCategory,
+		arg.ID,
+		arg.CategoryID,
+		arg.UpdatedBy,
+		arg.UpdatedAt,
+	)
+	return err
+}
+
+const updateTransactionDate = `-- name: UpdateTransactionDate :exec
+UPDATE transactions SET 
+date = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1
+`
+
+type UpdateTransactionDateParams struct {
+	ID        string
+	Date      pgtype.Timestamp
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
+}
+
+func (q *Queries) UpdateTransactionDate(ctx context.Context, arg UpdateTransactionDateParams) error {
+	_, err := q.db.Exec(ctx, updateTransactionDate,
+		arg.ID,
+		arg.Date,
+		arg.UpdatedBy,
+		arg.UpdatedAt,
+	)
+	return err
+}
+
+const updateTransactionName = `-- name: UpdateTransactionName :exec
+UPDATE transactions SET 
+name = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1
+`
+
+type UpdateTransactionNameParams struct {
+	ID        string
+	Name      string
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
+}
+
+func (q *Queries) UpdateTransactionName(ctx context.Context, arg UpdateTransactionNameParams) error {
+	_, err := q.db.Exec(ctx, updateTransactionName,
+		arg.ID,
+		arg.Name,
+		arg.UpdatedBy,
+		arg.UpdatedAt,
+	)
+	return err
+}
+
+const updateTransactionRemark = `-- name: UpdateTransactionRemark :exec
+UPDATE transactions SET 
+remark = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1
+`
+
+type UpdateTransactionRemarkParams struct {
+	ID        string
+	Remark    pgtype.Text
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
+}
+
+func (q *Queries) UpdateTransactionRemark(ctx context.Context, arg UpdateTransactionRemarkParams) error {
+	_, err := q.db.Exec(ctx, updateTransactionRemark,
+		arg.ID,
+		arg.Remark,
 		arg.UpdatedBy,
 		arg.UpdatedAt,
 	)
