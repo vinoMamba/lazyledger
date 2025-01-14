@@ -126,13 +126,15 @@ func (b *transactionBiz) GetTransaction(ctx fiber.Ctx, userId string, id string)
 		return nil, errors.New("internal server error")
 	}
 
+	date := tx.Date.Time.Format(time.DateOnly)
+
 	return &res.TransactionItem{
 		ID:         tx.ID,
 		Name:       tx.Name,
 		Amount:     amount.Float64,
 		CategoryID: tx.CategoryID.String,
 		Type:       tx.Type.Int16,
-		Date:       tx.Date.Time,
+		Date:       date,
 		Remark:     tx.Remark.String,
 	}, nil
 }
@@ -152,11 +154,13 @@ func (b *transactionBiz) GetTransactionList(ctx fiber.Ctx, userId string) ([]*re
 			log.Errorf("get transaction amount error: %v", err)
 			return nil, errors.New("internal server error")
 		}
+		date := tx.Date.Time.Format(time.DateOnly)
+
 		txsRes = append(txsRes, &res.TransactionItem{
 			ID:         tx.ID,
 			Name:       tx.Name,
 			Amount:     amount.Float64,
-			Date:       tx.Date.Time,
+			Date:       date,
 			Remark:     tx.Remark.String,
 			CategoryID: tx.CategoryID.String,
 			Type:       tx.Type.Int16,
