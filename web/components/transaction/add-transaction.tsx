@@ -103,7 +103,7 @@ export const AddTransaction = () => {
                       <FormItem className="w-full">
                         <FormLabel>日期</FormLabel>
                         <FormControl>
-                          <TransactionDateInput {...field} />
+                          <TransactionDateInput {...field} className="w-full" />
                         </FormControl>
                       </FormItem>
                     )}

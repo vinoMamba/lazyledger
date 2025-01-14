@@ -21,13 +21,14 @@ const isValidDate = (dateString: string): boolean => {
 type TransactionDateInputProps = {
   value: string
   onChange: (date: string) => void
+  className?: string
 }
 
-export const TransactionDateInput = ({ value, onChange }: TransactionDateInputProps) => {
+export const TransactionDateInput = ({ value, onChange, className }: TransactionDateInputProps) => {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    if (isValidDate(value)) {
+    if (isValidDate(value) && value !== format(new Date(value), DATE_FORMAT)) {
       onChange(format(new Date(value), DATE_FORMAT))
     }
   }, [value, onChange])
@@ -45,7 +46,8 @@ export const TransactionDateInput = ({ value, onChange }: TransactionDateInputPr
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal",
+            "justify-start text-left font-normal",
+            className,
             !value && "text-muted-foreground"
           )}
         >
