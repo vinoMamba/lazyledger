@@ -36,7 +36,7 @@ func (b *transactionBiz) CreateTransaction(ctx fiber.Ctx, userId string, params 
 		return errors.New("internal server error")
 	}
 
-	date, err := time.Parse(time.DateTime, params.Date)
+	date, err := time.Parse(time.DateOnly, params.Date)
 	if err != nil {
 		log.Errorf("parse transaction date error: %v", err)
 		return errors.New("invalid date format")
@@ -70,7 +70,7 @@ func (b *transactionBiz) UpdateTransaction(ctx fiber.Ctx, userId string, params 
 		return errors.New("transaction not found")
 	}
 
-	date, err := time.Parse(time.DateTime, params.Date)
+	date, err := time.Parse(time.DateOnly, params.Date)
 	if err != nil {
 		log.Errorf("parse transaction date error: %v", err)
 		return errors.New("invalid date format")
