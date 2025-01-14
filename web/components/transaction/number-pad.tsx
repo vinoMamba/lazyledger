@@ -3,6 +3,7 @@
 import { useState, useEffect, ReactNode } from "react"
 import { Button } from "../ui/button"
 import { DeleteIcon } from "lucide-react"
+import { Input } from "../ui/input"
 
 type NumberItem = {
   key: string
@@ -65,21 +66,22 @@ type NumberPadProps = {
 }
 
 export const NumberPad = ({ value, onChange, maxLength = 10 }: NumberPadProps) => {
+  const [inputValue, setInputValue] = useState(value)
   const [activeKey, setActiveKey] = useState<ValidKey | null>(null)
 
   useEffect(() => {
-    const formattedValue = formatValue(value, maxLength)
-    if (formattedValue !== value) {
-      onChange(formattedValue)
+    const formattedValue = formatValue(inputValue, maxLength)
+    if (formattedValue !== inputValue) {
+      setInputValue(formattedValue)
     }
-  }, [value, onChange, maxLength])
+  }, [value, setInputValue, inputValue, maxLength])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key as ValidKey
       if (numberItems.has(key)) {
         setActiveKey(key)
-        onChange(numberItems.get(key)?.action(value) || '')
+        setInputValue(numberItems.get(key)?.action(inputValue) || '')
       }
     }
     const handleKeyUp = () => setActiveKey(null)
@@ -90,17 +92,24 @@ export const NumberPad = ({ value, onChange, maxLength = 10 }: NumberPadProps) =
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [value, activeKey, onChange])
+  }, [activeKey, onChange, inputValue])
 
   const handleButtonClick = (item: NumberItem) => {
-    onChange(item.action(value))
+    setInputValue(item.action(inputValue))
+  }
+
+  const handleConfirm = () => {
+    onChange(inputValue)
   }
 
   return (
     <div>
       <div className="grid grid-cols-3 gap-2">
+        <Input value={inputValue} onChange={() => { }} className="col-span-2" />
+        <Button className="col-span-1" onClick={handleConfirm}>确定</Button>
         {Array.from(numberItems.values()).map((item, index) => (
           <Button
+            tabIndex={-1}
             variant={activeKey === item.key ? 'default' : 'outline'}
             className="w-full p-2"
             size="icon"

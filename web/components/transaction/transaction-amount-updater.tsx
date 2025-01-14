@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "../ui/button"
 import { NumberPad } from "./number-pad"
 import { cn } from "@/lib/utils"
-type TransactionAmountInputProps = {
+import { updateTransactionAmountAction } from "@/actions/update-transaction-amount"
+
+type TransactionAmountUpdaterProps = {
   value: number
-  onChange: (amount: number) => void
   className?: string
+  id: string
 }
 
-export const TransactionAmountInput = ({ value, onChange, className }: TransactionAmountInputProps) => {
+export const TransactionAmountUpdater = ({ value, className, id }: TransactionAmountUpdaterProps) => {
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState(value.toString())
 
@@ -19,17 +20,27 @@ export const TransactionAmountInput = ({ value, onChange, className }: Transacti
     setAmount(value.toString())
   }, [value])
 
-  const handleChange = (value: string) => {
-    setAmount(value)
-    onChange(Number(value))
+  const handleChange = async (newValue: string) => {
+    if (newValue === amount) {
+      setOpen(false)
+      return
+    }
+    setAmount(newValue)
     setOpen(false)
+    await updateTransactionAmountAction({ id: id, amount: Number(newValue) })
   }
+
 
   return (
     <div>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className={cn("w-full items-center justify-start", className)}>{amount.toString()}</Button>
+        <PopoverTrigger>
+          <span
+            tabIndex={-1}
+            className={cn("border-none outline-none text-2xl font-semibold", className)}
+          >
+            {amount.toString()}
+          </span>
         </PopoverTrigger>
         <PopoverContent className="w-80" align="start">
           <NumberPad value={amount.toString()} onChange={handleChange} />
