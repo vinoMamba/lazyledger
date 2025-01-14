@@ -36,11 +36,17 @@ func (b *transactionBiz) CreateTransaction(ctx fiber.Ctx, userId string, params 
 		return errors.New("internal server error")
 	}
 
+	date, err := time.Parse(time.DateTime, params.Date)
+	if err != nil {
+		log.Errorf("parse transaction date error: %v", err)
+		return errors.New("invalid date format")
+	}
+
 	if err := b.Queries.InsertTransaction(ctx.Context(), repository.InsertTransactionParams{
 		ID:         tId,
 		Name:       params.Name,
 		Amount:     int32(params.Amount),
-		Date:       pgtype.Timestamp{Time: params.Date, Valid: true},
+		Date:       pgtype.Timestamp{Time: date, Valid: true},
 		CategoryID: params.CategoryId,
 		CreatedBy:  pgtype.Text{String: userId, Valid: true},
 		CreatedAt:  pgtype.Timestamp{Time: time.Now(), Valid: true},
@@ -64,11 +70,17 @@ func (b *transactionBiz) UpdateTransaction(ctx fiber.Ctx, userId string, params 
 		return errors.New("transaction not found")
 	}
 
+	date, err := time.Parse(time.DateTime, params.Date)
+	if err != nil {
+		log.Errorf("parse transaction date error: %v", err)
+		return errors.New("invalid date format")
+	}
+
 	if err := b.Queries.UpdateTransaction(ctx.Context(), repository.UpdateTransactionParams{
 		ID:         tx.ID,
 		Name:       params.Name,
 		Amount:     int32(params.Amount),
-		Date:       pgtype.Timestamp{Time: params.Date, Valid: true},
+		Date:       pgtype.Timestamp{Time: date, Valid: true},
 		CategoryID: params.CategoryId,
 		UpdatedBy:  pgtype.Text{String: userId, Valid: true},
 		UpdatedAt:  pgtype.Timestamp{Time: time.Now(), Valid: true},
