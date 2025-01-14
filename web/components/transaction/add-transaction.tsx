@@ -3,20 +3,22 @@
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AddTransactionSchema } from "@/schemas/transaction"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { useHotkeys } from "react-hotkeys-hook"
-import { DescriptionInput } from "./description-input"
-import { AmountInput } from "./amount-input"
-import { DatePicker } from "./date-picker"
-import { CategorySelect } from "@/components/category/category-select"
 import { addTransactionAction } from "@/actions/add-transaction"
 import { toast } from "sonner"
-
+import { TransactionDateInput } from "./transaction-date-input"
+import { Input } from "../ui/input"
+import { TransactionAmountInput } from "./transaction-amount-input"
+import { format } from "date-fns"
+import { TransactionCategoryInput } from "./transaction-category-input"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
+import { TransactionRemarkInput } from "./transaction-remark-input"
 
 export const AddTransaction = () => {
   const [open, setOpen] = useState(false)
@@ -24,10 +26,12 @@ export const AddTransaction = () => {
   const form = useForm<z.infer<typeof AddTransactionSchema>>({
     resolver: zodResolver(AddTransactionSchema),
     defaultValues: {
-      amount: 0.00,
-      date: "",
+      amount: 0,
+      date: format(new Date(), 'yyyy-MM-dd'),
       name: "",
       categoryId: "",
+      remark: "",
+      tagIds: [],
     },
   })
 
@@ -38,6 +42,10 @@ export const AddTransaction = () => {
   }, [open, form])
 
   const onSubmit = form.handleSubmit(async (values) => {
+    if (values.amount === 0 || values.categoryId === "" || values.name === "") {
+      toast.error('请填写完整信息')
+      return
+    }
     const res = await addTransactionAction(values)
     if (res.code === 200) {
       toast.success('添加成功')
@@ -49,74 +57,100 @@ export const AddTransaction = () => {
 
   return (
     <div>
-      <Button size="icon" variant="outline" onClick={() => setOpen(true)}>
-        <Plus />
-      </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="top-1/4 shadow-2xl border bg-sidebar">
-          <DialogHeader>
-            <DialogTitle>添加交易</DialogTitle>
-            <DialogDescription></DialogDescription>
-          </DialogHeader>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <Button size="icon" variant="outline" onClick={() => setOpen(true)}>
+            <Plus />
+          </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>添加交易</SheetTitle>
+            <SheetDescription>手动添加一笔交易</SheetDescription>
+          </SheetHeader>
           <Form {...form}>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit} className="h-full relative pt-4">
               <div className=" space-y-4">
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <DatePicker {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="categoryId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <CategorySelect {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>交易名称</FormLabel>
                       <FormControl>
-                        <DescriptionInput {...field} placeholder="描述" />
+                        <Input {...field} placeholder="添加交易名称" />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
+                <div className="flex gap-4">
+                  <FormField
+                    control={form.control}
+                    name="amount"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>金额</FormLabel>
+                        <FormControl>
+                          <TransactionAmountInput {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="date"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>日期</FormLabel>
+                        <FormControl>
+                          <TransactionDateInput {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
-                  name="amount"
+                  name="categoryId"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-full">
+                      <FormLabel>分类</FormLabel>
                       <FormControl>
-                        <AmountInput {...field} />
+                        <TransactionCategoryInput {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">
+
+                <FormField
+                  control={form.control}
+                  name="remark"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="item-1" tabIndex={-1}>
+                          <AccordionTrigger tabIndex={-1}>
+                            <FormLabel>备注</FormLabel>
+                          </AccordionTrigger>
+                          <AccordionContent className="p-2">
+                            <FormControl>
+                              <TransactionRemarkInput value={field.value || ''} onChange={field.onChange} />
+                            </FormControl>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full absolute bottom-16">
                   添 加
                 </Button>
               </div>
             </form>
           </Form>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

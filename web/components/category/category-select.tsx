@@ -50,7 +50,7 @@ export const CategorySelect = ({ value, onChange }: CategorySelectProps) => {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="outline" className={cn(
-          "w-full justify-start text-left font-normal bg-sidebar hover:bg-sidebar focus-within:ring-1 focus-within:ring-ring",
+          "w-full justify-start text-left font-normal hover:bg-sidebar focus-within:ring-1 focus-within:ring-ring",
         )}>
           {
             innerCategory ? (
@@ -68,20 +68,21 @@ export const CategorySelect = ({ value, onChange }: CategorySelectProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
+        align="start"
         onKeyDown={e => {
           if (e.key === 'Enter') {
             e.preventDefault()
             e.stopPropagation()
           }
         }}
-        className="w-[29rem]">
+      >
         <Command>
           <CommandInput
             placeholder="请选择分类"
             value={searchValue}
             onValueChange={setSearchValue}
           />
-          <CommandList className="max-h-[170px] ">
+          <CommandList className="max-h-full">
             <CommandEmpty>No date found.</CommandEmpty>
             <CommandGroup>
               {categoryOptions?.map((option) => (

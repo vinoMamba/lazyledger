@@ -18,7 +18,9 @@ export const getTransactionListAction = async () => {
       }
     })
     const json = await result.json();
+    console.log(json)
     const transactionList = TransactionListSchema.safeParse(json)
+    console.log(transactionList.success)
     if (transactionList.success) {
       return transactionList.data
     } else {

@@ -102,6 +102,7 @@ export const NumberPad = ({ value, onChange, maxLength = 10 }: NumberPadProps) =
         {Array.from(numberItems.values()).map((item, index) => (
           <Button
             variant={activeKey === item.key ? 'default' : 'outline'}
+            className="w-full p-2"
             size="icon"
             key={index}
             onClick={() => handleButtonClick(item)}
