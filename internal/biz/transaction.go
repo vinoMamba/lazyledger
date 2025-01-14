@@ -2,6 +2,7 @@ package biz
 
 import (
 	"errors"
+	"math/big"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -45,8 +46,9 @@ func (b *transactionBiz) CreateTransaction(ctx fiber.Ctx, userId string, params 
 	if err := b.Queries.InsertTransaction(ctx.Context(), repository.InsertTransactionParams{
 		ID:         tId,
 		Name:       params.Name,
-		Amount:     int32(params.Amount),
+		Amount:     pgtype.Numeric{Int: big.NewInt(int64(params.Amount * 100)), Exp: -2, Valid: true},
 		Date:       pgtype.Timestamp{Time: date, Valid: true},
+		Remark:     pgtype.Text{String: params.Remark, Valid: true},
 		CategoryID: params.CategoryId,
 		CreatedBy:  pgtype.Text{String: userId, Valid: true},
 		CreatedAt:  pgtype.Timestamp{Time: time.Now(), Valid: true},
@@ -79,8 +81,9 @@ func (b *transactionBiz) UpdateTransaction(ctx fiber.Ctx, userId string, params 
 	if err := b.Queries.UpdateTransaction(ctx.Context(), repository.UpdateTransactionParams{
 		ID:         tx.ID,
 		Name:       params.Name,
-		Amount:     int32(params.Amount),
+		Amount:     pgtype.Numeric{Int: big.NewInt(int64(params.Amount * 100)), Exp: -2, Valid: true},
 		Date:       pgtype.Timestamp{Time: date, Valid: true},
+		Remark:     pgtype.Text{String: params.Remark, Valid: true},
 		CategoryID: params.CategoryId,
 		UpdatedBy:  pgtype.Text{String: userId, Valid: true},
 		UpdatedAt:  pgtype.Timestamp{Time: time.Now(), Valid: true},
@@ -117,13 +120,20 @@ func (b *transactionBiz) GetTransaction(ctx fiber.Ctx, userId string, id string)
 		return nil, errors.New("transaction not found")
 	}
 
+	amount, err := tx.Amount.Float64Value()
+	if err != nil {
+		log.Errorf("get transaction amount error: %v", err)
+		return nil, errors.New("internal server error")
+	}
+
 	return &res.TransactionItem{
 		ID:         tx.ID,
 		Name:       tx.Name,
-		Amount:     int(tx.Amount),
+		Amount:     amount.Float64,
 		CategoryID: tx.CategoryID.String,
 		Type:       tx.Type.Int16,
 		Date:       tx.Date.Time,
+		Remark:     tx.Remark.String,
 	}, nil
 }
 
@@ -137,11 +147,17 @@ func (b *transactionBiz) GetTransactionList(ctx fiber.Ctx, userId string) ([]*re
 
 	var txsRes []*res.TransactionItem
 	for _, tx := range txs {
+		amount, err := tx.Amount.Float64Value()
+		if err != nil {
+			log.Errorf("get transaction amount error: %v", err)
+			return nil, errors.New("internal server error")
+		}
 		txsRes = append(txsRes, &res.TransactionItem{
 			ID:         tx.ID,
 			Name:       tx.Name,
-			Amount:     int(tx.Amount),
+			Amount:     amount.Float64,
 			Date:       tx.Date.Time,
+			Remark:     tx.Remark.String,
 			CategoryID: tx.CategoryID.String,
 			Type:       tx.Type.Int16,
 		})

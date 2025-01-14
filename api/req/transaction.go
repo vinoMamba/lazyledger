@@ -5,6 +5,7 @@ type CreateTransactionReq struct {
 	Amount     float64 `json:"amount" validate:"required"`
 	CategoryId string  `json:"categoryId" validate:"required"`
 	Date       string  `json:"date" validate:"required,datetime=2006-01-02"`
+	Remark     string  `json:"remark" validate:"omitempty"`
 }
 
 type UpdateTransactionReq struct {
@@ -13,4 +14,5 @@ type UpdateTransactionReq struct {
 	Amount     float64 `json:"amount" validate:"required"`
 	CategoryId string  `json:"categoryId" validate:"required"`
 	Date       string  `json:"date" validate:"required,datetime=2006-01-02"`
+	Remark     string  `json:"remark" validate:"omitempty"`
 }

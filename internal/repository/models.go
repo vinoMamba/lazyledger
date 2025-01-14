@@ -37,7 +37,8 @@ type Transaction struct {
 	ID         string
 	Name       string
 	Date       pgtype.Timestamp
-	Amount     int32
+	Amount     pgtype.Numeric
+	Remark     pgtype.Text
 	CategoryID string
 	IsDeleted  pgtype.Bool
 	CreatedBy  pgtype.Text

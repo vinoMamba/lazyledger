@@ -31,7 +31,7 @@ func (q *Queries) DeleteTransaction(ctx context.Context, arg DeleteTransactionPa
 }
 
 const getTransactionById = `-- name: GetTransactionById :one
-SELECT t.id, t.name, t.amount, t.date, c.id AS category_id, c.type 
+SELECT t.id, t.name, t.amount, t.date, t.remark, c.id AS category_id, c.type 
 FROM transactions t 
 LEFT JOIN categories c ON t.category_id = c.id
 WHERE t.id = $1 AND t.is_deleted = false LIMIT 1
@@ -40,8 +40,9 @@ WHERE t.id = $1 AND t.is_deleted = false LIMIT 1
 type GetTransactionByIdRow struct {
 	ID         string
 	Name       string
-	Amount     int32
+	Amount     pgtype.Numeric
 	Date       pgtype.Timestamp
+	Remark     pgtype.Text
 	CategoryID pgtype.Text
 	Type       pgtype.Int2
 }
@@ -54,6 +55,7 @@ func (q *Queries) GetTransactionById(ctx context.Context, id string) (GetTransac
 		&i.Name,
 		&i.Amount,
 		&i.Date,
+		&i.Remark,
 		&i.CategoryID,
 		&i.Type,
 	)
@@ -61,7 +63,7 @@ func (q *Queries) GetTransactionById(ctx context.Context, id string) (GetTransac
 }
 
 const getTransactionListByCreator = `-- name: GetTransactionListByCreator :many
-SELECT t.id, t.name, t.amount, t.date, c.id AS category_id, c.type 
+SELECT t.id, t.name, t.amount, t.date, t.remark, c.id AS category_id, c.type 
 FROM transactions t 
 LEFT JOIN categories c ON t.category_id = c.id
 WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC
@@ -70,8 +72,9 @@ WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC
 type GetTransactionListByCreatorRow struct {
 	ID         string
 	Name       string
-	Amount     int32
+	Amount     pgtype.Numeric
 	Date       pgtype.Timestamp
+	Remark     pgtype.Text
 	CategoryID pgtype.Text
 	Type       pgtype.Int2
 }
@@ -90,6 +93,7 @@ func (q *Queries) GetTransactionListByCreator(ctx context.Context, createdBy pgt
 			&i.Name,
 			&i.Amount,
 			&i.Date,
+			&i.Remark,
 			&i.CategoryID,
 			&i.Type,
 		); err != nil {
@@ -109,17 +113,19 @@ INSERT INTO transactions (
   name, 
   amount,
   date,
+  remark,
   category_id,
   created_by,
   created_at
-) VALUES ($1, $2, $3, $4, $5, $6, $7)
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 `
 
 type InsertTransactionParams struct {
 	ID         string
 	Name       string
-	Amount     int32
+	Amount     pgtype.Numeric
 	Date       pgtype.Timestamp
+	Remark     pgtype.Text
 	CategoryID string
 	CreatedBy  pgtype.Text
 	CreatedAt  pgtype.Timestamp
@@ -131,6 +137,7 @@ func (q *Queries) InsertTransaction(ctx context.Context, arg InsertTransactionPa
 		arg.Name,
 		arg.Amount,
 		arg.Date,
+		arg.Remark,
 		arg.CategoryID,
 		arg.CreatedBy,
 		arg.CreatedAt,
@@ -143,17 +150,19 @@ UPDATE transactions SET
 name = $2,
 amount = $3,
 date = $4,
-category_id = $5,
-updated_by = $6,
-updated_at = $7
+remark = $5,
+category_id = $6,
+updated_by = $7,
+updated_at = $8
 WHERE id = $1
 `
 
 type UpdateTransactionParams struct {
 	ID         string
 	Name       string
-	Amount     int32
+	Amount     pgtype.Numeric
 	Date       pgtype.Timestamp
+	Remark     pgtype.Text
 	CategoryID string
 	UpdatedBy  pgtype.Text
 	UpdatedAt  pgtype.Timestamp
@@ -165,6 +174,7 @@ func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionPa
 		arg.Name,
 		arg.Amount,
 		arg.Date,
+		arg.Remark,
 		arg.CategoryID,
 		arg.UpdatedBy,
 		arg.UpdatedAt,
