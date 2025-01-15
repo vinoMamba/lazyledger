@@ -44,7 +44,7 @@ const columns: ColumnDef<Transaction>[] = [
     accessorKey: 'categoryId',
     header: '分类',
     cell: ({ row }) => {
-      return <CategoryCell value={row.original.categoryId} />
+      return <CategoryCell id={row.original.id} value={row.original.categoryId} />
     }
   },
   {

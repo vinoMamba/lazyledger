@@ -20,7 +20,7 @@ export const TransactionPanel = () => {
         <TransactionAmountUpdater className={cn(currentTransaction.type === 1 && " text-green-700", "text-2xl font-semibold")} value={currentTransaction.amount} id={currentTransaction.id} />
         <TransactionDateUpdater id={currentTransaction.id} value={currentTransaction.date} />
       </div>
-      <CategoryCell value={currentTransaction.categoryId} />
+      <CategoryCell id={currentTransaction.id} value={currentTransaction.categoryId} />
       <Separator />
       <div className="flex items-center gap-2">
         <div>相似交易</div>

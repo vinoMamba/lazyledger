@@ -8,10 +8,12 @@ import { Check } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { CategoryItemSchema, CategoryListSchema } from "@/schemas/category"
 import { CategoryIcon } from "./catetory-icon"
+import { updateTransactionCategoryAction } from "@/actions/update-transaction-category"
 
 
 
 type CategoryCellProps = {
+  id: string
   value: string
 }
 
@@ -21,7 +23,8 @@ const fetchCategoryOptionsFn = async () => {
   return json as z.infer<typeof CategoryListSchema>
 }
 
-export const CategoryCell = ({ value }: CategoryCellProps) => {
+export const CategoryCell = ({ id, value }: CategoryCellProps) => {
+
   const [innerCategory, setInnerCategory] = useState<z.infer<typeof CategoryItemSchema> | null>(null)
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
@@ -36,8 +39,9 @@ export const CategoryCell = ({ value }: CategoryCellProps) => {
   }, [value, categoryOptions])
 
 
-  const handleSelect = (selectValue: z.infer<typeof CategoryItemSchema>) => {
-    console.log(selectValue)
+  const handleSelect = async (selectValue: z.infer<typeof CategoryItemSchema>) => {
+    await updateTransactionCategoryAction({ id, categoryId: selectValue.id })
+    setInnerCategory(selectValue)
     setSearchValue('')
     setOpen(false)
   }
@@ -49,13 +53,15 @@ export const CategoryCell = ({ value }: CategoryCellProps) => {
         </div>
       </PopoverTrigger>
       <PopoverContent
+        className="w-[200px]"
+        align="start"
         onKeyDown={e => {
           if (e.key === 'Enter') {
             e.preventDefault()
             e.stopPropagation()
           }
         }}
-        className="w-[29rem]">
+      >
         <Command>
           <CommandInput
             placeholder="请选择分类"
@@ -76,7 +82,7 @@ export const CategoryCell = ({ value }: CategoryCellProps) => {
                       <span>{option.icon}</span>
                       <span >{option.name}</span>
                     </div>
-                    {value === option.id && <Check />}
+                    {innerCategory?.id === option.id && <Check />}
                   </div>
                 </CommandItem>
               ))}

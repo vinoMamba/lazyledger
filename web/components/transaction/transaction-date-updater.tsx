@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { format } from "date-fns"
 import { updateTransactionDateAction } from "@/actions/update-transaction-date"
 
@@ -22,6 +22,10 @@ type TransactionDateUpdaterProps = {
 export const TransactionDateUpdater = ({ id, value }: TransactionDateUpdaterProps) => {
   const [date, setDate] = useState(value)
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    setDate(value)
+  }, [value])
 
   const handleChange = (date: Date | undefined) => {
     if (date) {

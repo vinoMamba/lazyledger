@@ -23,9 +23,6 @@ const fetchCategoryOptionsFn = async () => {
   return json as z.infer<typeof CategoryListSchema>
 }
 
-
-
-
 export const CategorySelect = ({ value, onChange }: CategorySelectProps) => {
   const [innerCategory, setInnerCategory] = useState<z.infer<typeof CategoryItemSchema> | null>(null)
   const [open, setOpen] = useState(false)
@@ -68,7 +65,6 @@ export const CategorySelect = ({ value, onChange }: CategorySelectProps) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        align="start"
         onKeyDown={e => {
           if (e.key === 'Enter') {
             e.preventDefault()
@@ -82,7 +78,7 @@ export const CategorySelect = ({ value, onChange }: CategorySelectProps) => {
             value={searchValue}
             onValueChange={setSearchValue}
           />
-          <CommandList className="max-h-full">
+          <CommandList>
             <CommandEmpty>No date found.</CommandEmpty>
             <CommandGroup>
               {categoryOptions?.map((option) => (
