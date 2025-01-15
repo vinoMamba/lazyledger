@@ -3,6 +3,8 @@ import { Chart } from "@/components/charts/chart";
 import { LineChart } from "@/components/charts/line-chart";
 import { RadarComponent } from "@/components/charts/radar-chart";
 
+export const dynamic = 'force-dynamic';
+
 export default function OverviewPage() {
   return (
     <div className="w-full h-screen flex flex-col gap-4 p-4">

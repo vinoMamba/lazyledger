@@ -5,6 +5,8 @@ import { CategoryTable } from "@/components/category/category-table";
 import { Button } from "@/components/ui/button";
 
 
+export const dynamic = 'force-dynamic';
+
 export default async function CategoryPage(props: { searchParams: Promise<SearchParams> }) {
   const searchParams = await props.searchParams;
   const categories = await getCategoryListAction(searchParams)

@@ -2,6 +2,9 @@ import { getTransactionInfoAction, SearchParams } from "@/actions/get-transactio
 import { TransactionPanel } from "@/components/transaction/transaction-panel";
 
 
+
+export const dynamic = 'force-dynamic';
+
 export default async function RightPage(props: { searchParams: Promise<SearchParams> }) {
   const searchParams = await props.searchParams;
   const transactionInfo = await getTransactionInfoAction(searchParams)
