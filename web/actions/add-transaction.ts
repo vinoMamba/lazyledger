@@ -11,6 +11,7 @@ export async function addTransactionAction(value: z.infer<typeof AddTransactionS
   if (!validateValue.success) {
     return resErr("添加账单参数验证失败")
   }
+  console.log(validateValue.data)
   try {
     const token = (await cookies()).get('token')?.value
     const result = await fetch(`${process.env.NEXT_API_URL}/transaction`, {
@@ -26,6 +27,7 @@ export async function addTransactionAction(value: z.infer<typeof AddTransactionS
       revalidateTag("getTransactionList")
       return resOk("添加账单成功")
     } else {
+      console.log(json)
       return resErr(json.message)
     }
   } catch (error) {

@@ -2,7 +2,6 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { TypeSelect } from "./type-select"
 import { useForm } from "react-hook-form"
 import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -31,7 +30,6 @@ export const EditCategoryButton = ({ category }: EditCategoryProps) => {
       name: category.name,
       color: category.color,
       icon: category.icon,
-      type: category.type
     },
   })
 
@@ -64,18 +62,6 @@ export const EditCategoryButton = ({ category }: EditCategoryProps) => {
         <Form {...form}>
           <form onSubmit={onSubmit}>
             <div className=" space-y-4">
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <TypeSelect {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <div className="flex items-center gap-2 w-full">
                 <FormField
                   control={form.control}

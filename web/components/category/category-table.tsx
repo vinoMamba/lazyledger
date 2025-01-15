@@ -3,7 +3,7 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
 import { z } from "zod"
 import { CategoryItemSchema } from "@/schemas/category"
-import { ArrowDownRight, ArrowUpRight, Loader, SquareKanban } from "lucide-react"
+import { Loader } from "lucide-react"
 import { CategoryIcon } from "./catetory-icon"
 import { EditCategoryButton } from "./edit-category"
 import { DeleteCategoryButton } from "./delete-category"
@@ -30,27 +30,6 @@ const columns: ColumnDef<CategoryItem>[] = [
       return (
         <div className="flex items-center gap-2">
           <CategoryIcon category={row.original} />
-        </div>
-      )
-    }
-  },
-  {
-    accessorKey: "type",
-    header: () => {
-      return (
-        <div className="flex items-center gap-2">
-          <SquareKanban size={16} />
-          <span>类型</span>
-        </div>
-      )
-    },
-    size: 40,
-    cell: ({ row }) => {
-      const Icon = row.original.type === 0 ? <ArrowDownRight color="#ff5d04" size={16} /> : <ArrowUpRight color="#0685f2" size={16} />
-      return (
-        <div className="flex items-center gap-2">
-          {Icon}
-          <span>{row.original.type === 0 ? "支出" : "收入"}</span>
         </div>
       )
     }

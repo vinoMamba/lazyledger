@@ -3,28 +3,27 @@ INSERT INTO transactions (
   id, 
   name, 
   amount,
+  type,
   date,
   remark,
   category_id,
   created_by,
   created_at
-) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
 
 -- name: GetTransactionById :one
-SELECT t.id, t.name, t.amount, t.date, t.remark, c.id AS category_id, c.type 
-FROM transactions t 
-LEFT JOIN categories c ON t.category_id = c.id
-WHERE t.id = $1 AND t.is_deleted = false LIMIT 1;
+SELECT * FROM transactions WHERE id = $1 AND is_deleted = false LIMIT 1;
 
 -- name: UpdateTransaction :exec
 UPDATE transactions SET 
 name = $2,
 amount = $3,
-date = $4,
-remark = $5,
-category_id = $6,
-updated_by = $7,
-updated_at = $8
+type = $4,
+date = $5,
+remark = $6,
+category_id = $7,
+updated_by = $8,
+updated_at = $9
 WHERE id = $1;
 
 
@@ -63,6 +62,12 @@ updated_by = $3,
 updated_at = $4
 WHERE id = $1;
 
+-- name: UpdateTransactionType :exec
+UPDATE transactions SET 
+type = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1;
 
 -- name: DeleteTransaction :exec
 UPDATE transactions SET 
@@ -72,7 +77,4 @@ updated_at = $3
 WHERE id = $1;
 
 -- name: GetTransactionListByCreator :many
-SELECT t.id, t.name, t.amount, t.date, t.remark, c.id AS category_id, c.type 
-FROM transactions t 
-LEFT JOIN categories c ON t.category_id = c.id
-WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC, t.created_at DESC;
+SELECT * FROM transactions WHERE created_by = $1 AND is_deleted = false ORDER BY date DESC, created_at DESC;

@@ -5,18 +5,14 @@ export const AddTransactionSchema = z.object({
   date: z.string().date(),
   name: z.string(),
   remark: z.string().optional(),
+  type: z.number().min(0).max(1),
   tagIds: z.array(z.string()).optional(),
   categoryId: z.string(),
 })
 
-export const UpdateTransactionSchema = z.object({
+export const UpdateTransactionTypeSchema = z.object({
   id: z.string(),
-  amount: z.number(),
-  date: z.string().date(),
-  name: z.string(),
-  remark: z.string().optional(),
-  tagIds: z.array(z.string()).optional(),
-  categoryId: z.string(),
+  type: z.number().min(0).max(1),
 })
 
 export const UpdateTransactionNameSchema = z.object({
@@ -52,7 +48,7 @@ export const TransactionSchema = z.object({
   categoryId: z.string(),
   tagIds: z.array(z.string()).optional(),
   remark: z.string().optional(),
-  type: z.number(),
+  type: z.number().min(0).max(1),
 })
 
 export const TransactionListSchema = z.array(TransactionSchema)

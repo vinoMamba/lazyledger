@@ -31,7 +31,7 @@ func (q *Queries) DeleteCategory(ctx context.Context, arg DeleteCategoryParams) 
 }
 
 const getCategoryById = `-- name: GetCategoryById :one
-SELECT id, name, color, icon, type, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE id = $1 AND is_deleted = false LIMIT 1
+SELECT id, name, color, icon, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE id = $1 AND is_deleted = false LIMIT 1
 `
 
 func (q *Queries) GetCategoryById(ctx context.Context, id string) (Category, error) {
@@ -42,7 +42,6 @@ func (q *Queries) GetCategoryById(ctx context.Context, id string) (Category, err
 		&i.Name,
 		&i.Color,
 		&i.Icon,
-		&i.Type,
 		&i.IsDeleted,
 		&i.CreatedBy,
 		&i.CreatedAt,
@@ -53,7 +52,7 @@ func (q *Queries) GetCategoryById(ctx context.Context, id string) (Category, err
 }
 
 const getCategoryListByCreator = `-- name: GetCategoryListByCreator :many
-SELECT id, name, color, icon, type, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE created_by = $1 AND name LIKE $2 AND is_deleted = false ORDER BY created_at DESC
+SELECT id, name, color, icon, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE created_by = $1 AND name LIKE $2 AND is_deleted = false ORDER BY created_at DESC
 `
 
 type GetCategoryListByCreatorParams struct {
@@ -75,7 +74,6 @@ func (q *Queries) GetCategoryListByCreator(ctx context.Context, arg GetCategoryL
 			&i.Name,
 			&i.Color,
 			&i.Icon,
-			&i.Type,
 			&i.IsDeleted,
 			&i.CreatedBy,
 			&i.CreatedAt,
@@ -98,10 +96,9 @@ INSERT INTO categories (
   name, 
   color,
   icon,
-  type,
   created_by,
   created_at
-) VALUES ($1, $2, $3, $4, $5, $6, $7)
+) VALUES ($1, $2, $3, $4, $5, $6)
 `
 
 type InsertCategoryParams struct {
@@ -109,7 +106,6 @@ type InsertCategoryParams struct {
 	Name      string
 	Color     string
 	Icon      string
-	Type      int16
 	CreatedBy pgtype.Text
 	CreatedAt pgtype.Timestamp
 }
@@ -120,7 +116,6 @@ func (q *Queries) InsertCategory(ctx context.Context, arg InsertCategoryParams) 
 		arg.Name,
 		arg.Color,
 		arg.Icon,
-		arg.Type,
 		arg.CreatedBy,
 		arg.CreatedAt,
 	)
@@ -132,9 +127,8 @@ UPDATE categories SET
 name = $2,
 color = $3,
 icon = $4,
-type = $5,
-updated_by = $6,
-updated_at = $7
+updated_by = $5,
+updated_at = $6
 WHERE id = $1
 `
 
@@ -143,7 +137,6 @@ type UpdateCategoryParams struct {
 	Name      string
 	Color     string
 	Icon      string
-	Type      int16
 	UpdatedBy pgtype.Text
 	UpdatedAt pgtype.Timestamp
 }
@@ -154,7 +147,6 @@ func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) 
 		arg.Name,
 		arg.Color,
 		arg.Icon,
-		arg.Type,
 		arg.UpdatedBy,
 		arg.UpdatedAt,
 	)

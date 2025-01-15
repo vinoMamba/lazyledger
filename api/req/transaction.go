@@ -2,6 +2,7 @@ package req
 
 type CreateTransactionReq struct {
 	Name       string  `json:"name" validate:"required"`
+	Type       int16   `json:"type"`
 	Amount     float64 `json:"amount" validate:"required"`
 	CategoryId string  `json:"categoryId" validate:"required"`
 	Date       string  `json:"date" validate:"required,datetime=2006-01-02"`
@@ -31,4 +32,9 @@ type UpdateTransactionAmountReq struct {
 type UpdateTransactionNameReq struct {
 	ID   string `json:"id" validate:"required"`
 	Name string `json:"name" validate:"required"`
+}
+
+type UpdateTransactionTypeReq struct {
+	ID   string `json:"id" validate:"required"`
+	Type int    `json:"type" validate:"required,oneof=0 1"`
 }

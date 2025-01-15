@@ -27,7 +27,7 @@ export const TypeSelect = ({ value, onChange }: TypeSelectProps) => {
           <span>{value === 1 ? "收入" : "支出"}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[29rem]">
+      <PopoverContent className="w-full" align="start">
         <Command>
           <CommandInput
             placeholder="选择类型..."

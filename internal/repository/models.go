@@ -9,12 +9,10 @@ import (
 )
 
 type Category struct {
-	ID    string
-	Name  string
-	Color string
-	Icon  string
-	// 0: income, 1: expense
-	Type      int16
+	ID        string
+	Name      string
+	Color     string
+	Icon      string
 	IsDeleted pgtype.Bool
 	CreatedBy pgtype.Text
 	CreatedAt pgtype.Timestamp
@@ -34,8 +32,10 @@ type Tag struct {
 }
 
 type Transaction struct {
-	ID         string
-	Name       string
+	ID   string
+	Name string
+	// 0: income, 1: expense
+	Type       pgtype.Int2
 	Date       pgtype.Timestamp
 	Amount     pgtype.Numeric
 	Remark     pgtype.Text

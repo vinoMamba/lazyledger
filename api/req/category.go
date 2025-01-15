@@ -4,7 +4,6 @@ type CreateCategoryReq struct {
 	Name  string `json:"name"`
 	Color string `json:"color"`
 	Icon  string `json:"icon"`
-	Type  int    `json:"type"`
 }
 
 type UpdateCategoryReq struct {
@@ -12,5 +11,4 @@ type UpdateCategoryReq struct {
 	Name  string `json:"name"`
 	Color string `json:"color"`
 	Icon  string `json:"icon"`
-	Type  int    `json:"type"`
 }

@@ -16,6 +16,7 @@ import (
 type TransactionBiz interface {
 	CreateTransaction(ctx fiber.Ctx, userId string, params *req.CreateTransactionReq) error
 	UpdateTransactionName(ctx fiber.Ctx, userId string, params *req.UpdateTransactionNameReq) error
+	UpdateTransactionType(ctx fiber.Ctx, userId string, params *req.UpdateTransactionTypeReq) error
 	UpdateTransactionAmount(ctx fiber.Ctx, userId string, params *req.UpdateTransactionAmountReq) error
 	UpdateTransactionDate(ctx fiber.Ctx, userId string, params *req.UpdateTransactionDateReq) error
 	UpdateTransactionCategory(ctx fiber.Ctx, userId string, params *req.UpdateTransactionCategoryReq) error
@@ -50,6 +51,7 @@ func (b *transactionBiz) CreateTransaction(ctx fiber.Ctx, userId string, params 
 	if err := b.Queries.InsertTransaction(ctx.Context(), repository.InsertTransactionParams{
 		ID:         tId,
 		Name:       params.Name,
+		Type:       pgtype.Int2{Int16: int16(params.Type), Valid: true},
 		Amount:     pgtype.Numeric{Int: big.NewInt(int64(params.Amount * 100)), Exp: -2, Valid: true},
 		Date:       pgtype.Timestamp{Time: date, Valid: true},
 		Remark:     pgtype.Text{String: params.Remark, Valid: true},
@@ -195,6 +197,31 @@ func (b *transactionBiz) UpdateTransactionRemark(ctx fiber.Ctx, userId string, p
 	return nil
 }
 
+func (b *transactionBiz) UpdateTransactionType(ctx fiber.Ctx, userId string, params *req.UpdateTransactionTypeReq) error {
+
+	tx, err := b.Queries.GetTransactionById(ctx.Context(), params.ID)
+	if err != nil {
+		log.Errorf("get transaction by id error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	if tx.ID == "" {
+		return errors.New("transaction not found")
+	}
+
+	if err := b.Queries.UpdateTransactionType(ctx.Context(), repository.UpdateTransactionTypeParams{
+		ID:        tx.ID,
+		Type:      pgtype.Int2{Int16: int16(params.Type), Valid: true},
+		UpdatedBy: pgtype.Text{String: userId, Valid: true},
+		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+	}); err != nil {
+		log.Errorf("update transaction type error: %v", err)
+		return errors.New("internal server error")
+	}
+
+	return nil
+}
+
 func (b *transactionBiz) DeleteTransaction(ctx fiber.Ctx, userId string, id string) error {
 	if err := b.Queries.DeleteTransaction(ctx.Context(), repository.DeleteTransactionParams{
 		ID:        id,
@@ -232,7 +259,7 @@ func (b *transactionBiz) GetTransaction(ctx fiber.Ctx, userId string, id string)
 		ID:         tx.ID,
 		Name:       tx.Name,
 		Amount:     amount.Float64,
-		CategoryID: tx.CategoryID.String,
+		CategoryID: tx.CategoryID,
 		Type:       tx.Type.Int16,
 		Date:       date,
 		Remark:     tx.Remark.String,
@@ -262,7 +289,7 @@ func (b *transactionBiz) GetTransactionList(ctx fiber.Ctx, userId string) ([]*re
 			Amount:     amount.Float64,
 			Date:       date,
 			Remark:     tx.Remark.String,
-			CategoryID: tx.CategoryID.String,
+			CategoryID: tx.CategoryID,
 			Type:       tx.Type.Int16,
 		})
 	}

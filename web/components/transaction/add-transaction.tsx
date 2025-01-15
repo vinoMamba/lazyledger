@@ -19,6 +19,7 @@ import { format } from "date-fns"
 import { TransactionCategoryInput } from "./transaction-category-input"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
 import { TransactionRemarkInput } from "./transaction-remark-input"
+import { TypeSelect } from "./type-select"
 
 export const AddTransaction = () => {
   const [open, setOpen] = useState(false)
@@ -29,6 +30,7 @@ export const AddTransaction = () => {
       amount: 0,
       date: format(new Date(), 'yyyy-MM-dd'),
       name: "",
+      type: 0,
       categoryId: "",
       remark: "",
       tagIds: [],
@@ -73,6 +75,18 @@ export const AddTransaction = () => {
               <div className=" space-y-4">
                 <FormField
                   control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>类型</FormLabel>
+                      <FormControl>
+                        <TypeSelect {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -84,6 +98,7 @@ export const AddTransaction = () => {
                   )}
                 />
                 <div className="flex gap-4">
+
                   <FormField
                     control={form.control}
                     name="amount"

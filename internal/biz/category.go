@@ -40,7 +40,6 @@ func (b *categoryBiz) CreateCategory(ctx fiber.Ctx, userId string, params *req.C
 		Name:      params.Name,
 		Color:     params.Color,
 		Icon:      params.Icon,
-		Type:      int16(params.Type),
 		CreatedBy: pgtype.Text{String: userId, Valid: true},
 		CreatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
 	}); err != nil {
@@ -70,7 +69,6 @@ func (b *categoryBiz) UpdateCategory(ctx fiber.Ctx, userId string, params *req.U
 		ID:        category.ID,
 		Name:      params.Name,
 		Color:     params.Color,
-		Type:      int16(params.Type),
 		Icon:      params.Icon,
 		UpdatedBy: pgtype.Text{String: userId, Valid: true},
 		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
@@ -126,7 +124,6 @@ func (b *categoryBiz) GetCategoryListByCreator(ctx fiber.Ctx, userId, name strin
 			Name:  item.Name,
 			Color: item.Color,
 			Icon:  item.Icon,
-			Type:  int(item.Type),
 		})
 	}
 	return resItems, nil

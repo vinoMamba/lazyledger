@@ -31,71 +31,55 @@ func (q *Queries) DeleteTransaction(ctx context.Context, arg DeleteTransactionPa
 }
 
 const getTransactionById = `-- name: GetTransactionById :one
-SELECT t.id, t.name, t.amount, t.date, t.remark, c.id AS category_id, c.type 
-FROM transactions t 
-LEFT JOIN categories c ON t.category_id = c.id
-WHERE t.id = $1 AND t.is_deleted = false LIMIT 1
+SELECT id, name, type, date, amount, remark, category_id, is_deleted, created_by, created_at, updated_by, updated_at FROM transactions WHERE id = $1 AND is_deleted = false LIMIT 1
 `
 
-type GetTransactionByIdRow struct {
-	ID         string
-	Name       string
-	Amount     pgtype.Numeric
-	Date       pgtype.Timestamp
-	Remark     pgtype.Text
-	CategoryID pgtype.Text
-	Type       pgtype.Int2
-}
-
-func (q *Queries) GetTransactionById(ctx context.Context, id string) (GetTransactionByIdRow, error) {
+func (q *Queries) GetTransactionById(ctx context.Context, id string) (Transaction, error) {
 	row := q.db.QueryRow(ctx, getTransactionById, id)
-	var i GetTransactionByIdRow
+	var i Transaction
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Amount,
+		&i.Type,
 		&i.Date,
+		&i.Amount,
 		&i.Remark,
 		&i.CategoryID,
-		&i.Type,
+		&i.IsDeleted,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.UpdatedBy,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const getTransactionListByCreator = `-- name: GetTransactionListByCreator :many
-SELECT t.id, t.name, t.amount, t.date, t.remark, c.id AS category_id, c.type 
-FROM transactions t 
-LEFT JOIN categories c ON t.category_id = c.id
-WHERE t.created_by = $1 AND t.is_deleted = false ORDER BY t.date DESC, t.created_at DESC
+SELECT id, name, type, date, amount, remark, category_id, is_deleted, created_by, created_at, updated_by, updated_at FROM transactions WHERE created_by = $1 AND is_deleted = false ORDER BY date DESC, created_at DESC
 `
 
-type GetTransactionListByCreatorRow struct {
-	ID         string
-	Name       string
-	Amount     pgtype.Numeric
-	Date       pgtype.Timestamp
-	Remark     pgtype.Text
-	CategoryID pgtype.Text
-	Type       pgtype.Int2
-}
-
-func (q *Queries) GetTransactionListByCreator(ctx context.Context, createdBy pgtype.Text) ([]GetTransactionListByCreatorRow, error) {
+func (q *Queries) GetTransactionListByCreator(ctx context.Context, createdBy pgtype.Text) ([]Transaction, error) {
 	rows, err := q.db.Query(ctx, getTransactionListByCreator, createdBy)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetTransactionListByCreatorRow
+	var items []Transaction
 	for rows.Next() {
-		var i GetTransactionListByCreatorRow
+		var i Transaction
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
-			&i.Amount,
+			&i.Type,
 			&i.Date,
+			&i.Amount,
 			&i.Remark,
 			&i.CategoryID,
-			&i.Type,
+			&i.IsDeleted,
+			&i.CreatedBy,
+			&i.CreatedAt,
+			&i.UpdatedBy,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -112,18 +96,20 @@ INSERT INTO transactions (
   id, 
   name, 
   amount,
+  type,
   date,
   remark,
   category_id,
   created_by,
   created_at
-) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 `
 
 type InsertTransactionParams struct {
 	ID         string
 	Name       string
 	Amount     pgtype.Numeric
+	Type       pgtype.Int2
 	Date       pgtype.Timestamp
 	Remark     pgtype.Text
 	CategoryID string
@@ -136,6 +122,7 @@ func (q *Queries) InsertTransaction(ctx context.Context, arg InsertTransactionPa
 		arg.ID,
 		arg.Name,
 		arg.Amount,
+		arg.Type,
 		arg.Date,
 		arg.Remark,
 		arg.CategoryID,
@@ -149,11 +136,12 @@ const updateTransaction = `-- name: UpdateTransaction :exec
 UPDATE transactions SET 
 name = $2,
 amount = $3,
-date = $4,
-remark = $5,
-category_id = $6,
-updated_by = $7,
-updated_at = $8
+type = $4,
+date = $5,
+remark = $6,
+category_id = $7,
+updated_by = $8,
+updated_at = $9
 WHERE id = $1
 `
 
@@ -161,6 +149,7 @@ type UpdateTransactionParams struct {
 	ID         string
 	Name       string
 	Amount     pgtype.Numeric
+	Type       pgtype.Int2
 	Date       pgtype.Timestamp
 	Remark     pgtype.Text
 	CategoryID string
@@ -173,6 +162,7 @@ func (q *Queries) UpdateTransaction(ctx context.Context, arg UpdateTransactionPa
 		arg.ID,
 		arg.Name,
 		arg.Amount,
+		arg.Type,
 		arg.Date,
 		arg.Remark,
 		arg.CategoryID,
@@ -301,6 +291,31 @@ func (q *Queries) UpdateTransactionRemark(ctx context.Context, arg UpdateTransac
 	_, err := q.db.Exec(ctx, updateTransactionRemark,
 		arg.ID,
 		arg.Remark,
+		arg.UpdatedBy,
+		arg.UpdatedAt,
+	)
+	return err
+}
+
+const updateTransactionType = `-- name: UpdateTransactionType :exec
+UPDATE transactions SET 
+type = $2,
+updated_by = $3,
+updated_at = $4
+WHERE id = $1
+`
+
+type UpdateTransactionTypeParams struct {
+	ID        string
+	Type      pgtype.Int2
+	UpdatedBy pgtype.Text
+	UpdatedAt pgtype.Timestamp
+}
+
+func (q *Queries) UpdateTransactionType(ctx context.Context, arg UpdateTransactionTypeParams) error {
+	_, err := q.db.Exec(ctx, updateTransactionType,
+		arg.ID,
+		arg.Type,
 		arg.UpdatedBy,
 		arg.UpdatedAt,
 	)
