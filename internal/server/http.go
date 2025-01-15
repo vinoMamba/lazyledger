@@ -77,7 +77,7 @@ func NewHttpServer(
 	transaction.Put("/date", transactionHandler.UpdateTransactionDate)
 	transaction.Put("/category", transactionHandler.UpdateTransactionCategory)
 	transaction.Put("/remark", transactionHandler.UpdateTransactionRemark)
-	transaction.Delete("/:transactionId", transactionHandler.DeleteTransaction)
+	transaction.Delete("", transactionHandler.DeleteTransaction)
 	transaction.Get("/list", transactionHandler.GetTransactionList)
 	transaction.Get("/info", transactionHandler.GetTransaction)
 

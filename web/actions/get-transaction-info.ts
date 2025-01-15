@@ -9,6 +9,8 @@ export type SearchParams = {
 }
 
 export const getTransactionInfoAction = async (searchParams: SearchParams) => {
+  if (!searchParams.id) return null
+
   try {
     const token = (await cookies()).get('token')?.value
     const result = await fetch(`${process.env.NEXT_API_URL}/transaction/info?id=${searchParams.id}`, {

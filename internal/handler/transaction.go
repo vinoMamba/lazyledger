@@ -141,9 +141,15 @@ func (h *transactionHandler) UpdateTransactionRemark(ctx fiber.Ctx) error {
 
 func (h *transactionHandler) DeleteTransaction(ctx fiber.Ctx) error {
 	userId := GetUserIdFromLocals(ctx)
-	id := ctx.Params("id")
 
-	if err := h.transactionBiz.DeleteTransaction(ctx, userId, id); err != nil {
+	params := new(req.DeleteTransactionReq)
+	if err := ctx.Bind().JSON(params); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := h.transactionBiz.DeleteTransaction(ctx, userId, params); err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),
 		})

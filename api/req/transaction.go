@@ -38,3 +38,7 @@ type UpdateTransactionTypeReq struct {
 	ID   string `json:"id" validate:"required"`
 	Type int    `json:"type" validate:"required,oneof=0 1"`
 }
+
+type DeleteTransactionReq struct {
+	IDs []string `json:"ids" validate:"required"`
+}

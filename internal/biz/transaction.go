@@ -3,6 +3,7 @@ package biz
 import (
 	"errors"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -21,7 +22,7 @@ type TransactionBiz interface {
 	UpdateTransactionDate(ctx fiber.Ctx, userId string, params *req.UpdateTransactionDateReq) error
 	UpdateTransactionCategory(ctx fiber.Ctx, userId string, params *req.UpdateTransactionCategoryReq) error
 	UpdateTransactionRemark(ctx fiber.Ctx, userId string, params *req.UpdateTransactionRemarkReq) error
-	DeleteTransaction(ctx fiber.Ctx, userId string, id string) error
+	DeleteTransaction(ctx fiber.Ctx, userId string, req *req.DeleteTransactionReq) error
 	GetTransaction(ctx fiber.Ctx, userId string, id string) (*res.TransactionItem, error)
 	GetTransactionList(ctx fiber.Ctx, userId string) ([]*res.TransactionItem, error)
 }
@@ -222,9 +223,12 @@ func (b *transactionBiz) UpdateTransactionType(ctx fiber.Ctx, userId string, par
 	return nil
 }
 
-func (b *transactionBiz) DeleteTransaction(ctx fiber.Ctx, userId string, id string) error {
+func (b *transactionBiz) DeleteTransaction(ctx fiber.Ctx, userId string, req *req.DeleteTransactionReq) error {
+
+	ids := strings.Join(req.IDs, ",")
+
 	if err := b.Queries.DeleteTransaction(ctx.Context(), repository.DeleteTransactionParams{
-		ID:        id,
+		ID:        ids,
 		UpdatedBy: pgtype.Text{String: userId, Valid: true},
 		UpdatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
 	}); err != nil {

@@ -74,7 +74,7 @@ UPDATE transactions SET
 is_deleted = true,
 updated_by = $2,
 updated_at = $3
-WHERE id = $1;
+WHERE id IN ($1);
 
 -- name: GetTransactionListByCreator :many
 SELECT * FROM transactions WHERE created_by = $1 AND is_deleted = false ORDER BY date DESC, created_at DESC;

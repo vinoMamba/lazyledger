@@ -16,7 +16,7 @@ UPDATE transactions SET
 is_deleted = true,
 updated_by = $2,
 updated_at = $3
-WHERE id = $1
+WHERE id IN ($1)
 `
 
 type DeleteTransactionParams struct {
