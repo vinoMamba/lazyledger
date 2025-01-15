@@ -78,7 +78,10 @@ export const NumberPad = ({ value, onChange, maxLength = 10 }: NumberPadProps) =
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      const key = event.key as ValidKey
+      let key = event.key as ValidKey | '。'
+      if (key === '。') {
+        key = DOT
+      }
       if (numberItems.has(key)) {
         setActiveKey(key)
         setInputValue(numberItems.get(key)?.action(inputValue) || '')

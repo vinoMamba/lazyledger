@@ -29,6 +29,11 @@ export const UpdateTransactionAmountSchema = z.object({
   amount: z.number(),
 })
 
+export const UpdateTransactionDateSchema = z.object({
+  id: z.string(),
+  date: z.string().date(),
+})
+
 export const TransactionSchema = z.object({
   id: z.string(),
   amount: z.number(),

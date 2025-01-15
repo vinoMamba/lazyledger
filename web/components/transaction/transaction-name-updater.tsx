@@ -34,7 +34,7 @@ export const TransactionNameUpdater = ({ id, value }: TransactionNameUpdaterProp
         onChange={handleChange}
         onBlur={handleBlur}
         placeholder={value}
-        className="border-none outline-none text-2xl font-semibold"
+        className="border-none outline-none text-2xl font-semibold bg-transparent"
       />
     </div>
   )

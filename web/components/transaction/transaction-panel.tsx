@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { CategoryCell } from "../category/category-cell"
 import { TransactionNameUpdater } from "./transaction-name-updater"
 import { TransactionAmountUpdater } from "./transaction-amount-updater"
+import { TransactionDateUpdater } from "./transaction-date-updater"
 
 export const TransactionPanel = () => {
   const currentTransaction = useTransaction(s => s.currentTransaction)
@@ -17,7 +18,7 @@ export const TransactionPanel = () => {
       <TransactionNameUpdater id={currentTransaction.id} value={currentTransaction.name} />
       <div className="flex items-start justify-between pr-4">
         <TransactionAmountUpdater className={cn(currentTransaction.type === 1 && " text-green-700", "text-2xl font-semibold")} value={currentTransaction.amount} id={currentTransaction.id} />
-        <span className="text-sm text-muted-foreground">{currentTransaction.date}</span>
+        <TransactionDateUpdater id={currentTransaction.id} value={currentTransaction.date} />
       </div>
       <CategoryCell value={currentTransaction.categoryId} />
       <Separator />

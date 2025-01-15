@@ -8,6 +8,7 @@ import { z } from "zod"
 import { format } from "date-fns"
 import { useTransaction } from "@/hooks/use-transaction"
 import { CategoryCell } from "../category/category-cell"
+import { cn } from "@/lib/utils"
 
 type Transaction = z.infer<typeof TransactionSchema>
 
@@ -116,7 +117,7 @@ export const TransactionTable = ({ transactions }: TransactionTableProps) => {
               {currentTransaction?.id === row.original.id && <div className="w-1 h-4 bg-gray-500 rounded-full absolute left-0 top-0 translate-y-1/2"></div>}
               {row.getVisibleCells().map(cell => {
                 return (
-                  <div key={cell.id} className="w-full" >
+                  <div key={cell.id} className={cn(currentTransaction?.id === row.original.id ? "opacity-100" : "opacity-70", "w-full")} >
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext()
