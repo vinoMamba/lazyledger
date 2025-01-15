@@ -25,6 +25,7 @@ export async function updateTransactionAmountAction(value: z.infer<typeof Update
     const json = await result.json()
     if (result.status === 200) {
       revalidateTag("getTransactionList")
+      revalidateTag("getTransactionInfo")
       return resOk("更新账单金额成功")
     } else {
       return resErr(json.message)

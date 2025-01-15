@@ -25,6 +25,7 @@ export async function updateTransactionCategoryAction(value: z.infer<typeof Upda
     const json = await result.json()
     if (result.status === 200) {
       revalidateTag("getTransactionList")
+      revalidateTag("getTransactionInfo")
       return resOk("更新账单分类成功")
     } else {
       return resErr(json.message)

@@ -6,8 +6,9 @@ import { useEffect, useRef, useState } from "react"
 import { TransactionSchema } from "@/schemas/transaction"
 import { z } from "zod"
 import { format } from "date-fns"
-import { useTransaction } from "@/hooks/use-transaction"
-import { CategoryCell } from "../category/category-cell"
+import { CategoryCell } from "@/components/category/category-cell"
+import { useRouter } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 
 type Transaction = z.infer<typeof TransactionSchema>
@@ -58,17 +59,25 @@ const columns: ColumnDef<Transaction>[] = [
 
 
 export const TransactionTable = ({ transactions }: TransactionTableProps) => {
-  const setCurrentTransaction = useTransaction(s => s.setCurrentTransaction)
-  const currentTransaction = useTransaction(s => s.currentTransaction)
-
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const { replace } = useRouter()
+  const [currentTransactionId, setCurrentTransactionId] = useState<string>('')
   const [data, setData] = useState<Transaction[]>([])
 
   useEffect(() => {
     setData(transactions)
-    if (transactions.length > 0 && !currentTransaction ) {
-      setCurrentTransaction(transactions[0])
+    if (transactions.length > 0 && !currentTransactionId) {
+      setCurrentTransactionId(transactions[0].id)
     }
-  }, [transactions, setCurrentTransaction, currentTransaction])
+  }, [transactions, currentTransactionId])
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams)
+    params.set('id', currentTransactionId)
+    replace(`${pathname}?${params.toString()}`);
+  }, [currentTransactionId, pathname, replace, searchParams])
+
 
   const table = useReactTable({
     data,
@@ -89,7 +98,7 @@ export const TransactionTable = ({ transactions }: TransactionTableProps) => {
   })
 
   const handleRowClick = (row: Row<Transaction>) => {
-    setCurrentTransaction(row.original)
+    setCurrentTransactionId(row.original.id)
   }
 
 
@@ -114,10 +123,12 @@ export const TransactionTable = ({ transactions }: TransactionTableProps) => {
               }}
               onClick={() => handleRowClick(row)}
             >
-              {currentTransaction?.id === row.original.id && <div className="w-1 h-4 bg-gray-500 rounded-full absolute left-0 top-0 translate-y-1/2"></div>}
+              {currentTransactionId === row.original.id && <div className="w-1 h-4 bg-gray-500 rounded-full absolute left-0 top-0 translate-y-1/2"></div>}
               {row.getVisibleCells().map(cell => {
                 return (
-                  <div key={cell.id} className={cn(currentTransaction?.id === row.original.id ? "opacity-100" : "opacity-70", "w-full")} >
+                  <div key={cell.id}
+                  className={cn(currentTransactionId === row.original.id ? "opacity-100" : "opacity-70", "w-full")}
+                  >
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext()

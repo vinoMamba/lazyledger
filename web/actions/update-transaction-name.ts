@@ -25,6 +25,7 @@ export async function updateTransactionNameAction(value: z.infer<typeof UpdateTr
     const json = await result.json()
     if (result.status === 200) {
       revalidateTag("getTransactionList")
+      revalidateTag("getTransactionInfo")
       return resOk("更新账单名称成功")
     } else {
       return resErr(json.message)
