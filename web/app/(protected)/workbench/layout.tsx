@@ -36,11 +36,11 @@ export default function WorkbenchLayout({ left, right }: { left: React.ReactNode
         direction="horizontal"
         className="w-full h-full"
       >
-        <ResizablePanel defaultSize={50}>
+        <ResizablePanel defaultSize={70} minSize={50}>
           {left}
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={50}>
+        <ResizablePanel defaultSize={30} minSize={20}>
           {right}
         </ResizablePanel>
       </ResizablePanelGroup>

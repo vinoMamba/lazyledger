@@ -157,7 +157,7 @@ export const TransactionTable = ({ transactions }: TransactionTableProps) => {
                 }
                 style={{ transform: `translateY(${virtualRow.start}px)` }}
               >
-                <div className="w-10 relative">
+                <div className="w-10 h-full relative shrink-0">
                   <div className={
                     cn(
                       "hidden group-hover:flex absolute top-1/2 -translate-y-1/2 left-0 w-10  justify-center items-center",
@@ -181,7 +181,7 @@ export const TransactionTable = ({ transactions }: TransactionTableProps) => {
                     return (
                       <div
                         key={cell.id}
-                        className="flex-1 w-full h-full flex items-center"
+                        className="flex-1 w-full h-full flex items-center whitespace-nowrap"
                         style={{ width: cell.column.getSize() }}
                       >
                         {flexRender(
