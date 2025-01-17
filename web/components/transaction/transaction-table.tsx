@@ -180,7 +180,7 @@ export const TransactionTable = ({ transactions }: TransactionTableProps) => {
     <div className="h-full pt-4 relative">
       <DockMenu rowSelection={tableState.rowSelection} />
       <div
-        className="overflow-y-auto h-full relative"
+        className="overflow-y-auto h-[calc(100vh-128px)]  relative"
         ref={tableContainerRef}
         style={{
           scrollbarWidth: 'none',

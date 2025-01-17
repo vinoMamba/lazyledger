@@ -1,11 +1,11 @@
-import { ArrowDownWideNarrow, Search } from "lucide-react"
+import { ArrowDownWideNarrow, Search, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Filter } from "lucide-react";
 import { ResizableHandle } from "@/components/ui/resizable";
 import { ResizablePanel } from "@/components/ui/resizable";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
 import { AddTransaction } from "@/components/transaction/add-transaction";
+import { TransactionUpload } from "@/components/transaction/transaction-upload";
 
 export default function WorkbenchLayout({ left, right }: { left: React.ReactNode, right: React.ReactNode }) {
   return (<main className="h-screen flex flex-col">
@@ -22,6 +22,7 @@ export default function WorkbenchLayout({ left, right }: { left: React.ReactNode
             <Search />
           </Button>
           <AddTransaction />
+          <TransactionUpload />
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
           去问 AI 助手

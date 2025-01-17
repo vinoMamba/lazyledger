@@ -2,6 +2,7 @@
 
 import { updateTransactionNameAction } from "@/actions/update-transaction-name"
 import { useEffect, useState } from "react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 type TransactionNameUpdaterProps = {
   id: string
@@ -27,15 +28,20 @@ export const TransactionNameUpdater = ({ id, value }: TransactionNameUpdaterProp
   }
 
   return (
-    <div>
-      <input
-        type="text"
-        value={name}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        placeholder={value}
-        className="border-none outline-none text-2xl font-semibold bg-transparent"
-      />
-    </div>
+    <Tooltip>
+      <TooltipTrigger>
+        <input
+          type="text"
+          value={name}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          placeholder={value}
+          className="border-none outline-none text-2xl font-semibold bg-transparent truncate"
+        />
+      </TooltipTrigger>
+      <TooltipContent>
+        <span>{value}</span>
+      </TooltipContent>
+    </Tooltip>
   )
 }
