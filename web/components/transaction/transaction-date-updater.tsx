@@ -1,5 +1,4 @@
 "use client"
-import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import {
@@ -38,13 +37,12 @@ export const TransactionDateUpdater = ({ id, value }: TransactionDateUpdaterProp
     return (
       <Popover onOpenChange={setOpen} open={open}>
         <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className="border-none"
+          <span
+            className="border-none p-0 flex items-center gap-2"
           >
-            <CalendarIcon />
+            <CalendarIcon className="w-4 h-4" />
             {date ? format(new Date(date), DATE_FORMAT) : <span>选择日期</span>}
-          </Button>
+          </span>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar

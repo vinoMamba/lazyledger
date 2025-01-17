@@ -18,8 +18,8 @@ import { TransactionAmountInput } from "./transaction-amount-input"
 import { format } from "date-fns"
 import { TransactionCategoryInput } from "./transaction-category-input"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion"
-import { TransactionRemarkInput } from "./transaction-remark-input"
 import { TypeSelect } from "./type-select"
+import { Textarea } from "@/components/ui/textarea"
 
 export const AddTransaction = () => {
   const [open, setOpen] = useState(false)
@@ -150,7 +150,7 @@ export const AddTransaction = () => {
                           </AccordionTrigger>
                           <AccordionContent className="p-2">
                             <FormControl>
-                              <TransactionRemarkInput value={field.value || ''} onChange={field.onChange} />
+                              <Textarea {...field} value={field.value || ''} placeholder="添加备注" />
                             </FormControl>
                           </AccordionContent>
                         </AccordionItem>
