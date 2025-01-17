@@ -1,8 +1,13 @@
 package biz
 
 import (
+	"encoding/csv"
 	"errors"
+	"fmt"
+	"io"
 	"math/big"
+	"mime/multipart"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,6 +17,9 @@ import (
 	"github.com/vinoMamba/lazyledger/api/req"
 	"github.com/vinoMamba/lazyledger/api/res"
 	"github.com/vinoMamba/lazyledger/internal/repository"
+	"golang.org/x/exp/rand"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 )
 
 type TransactionBiz interface {
@@ -25,6 +33,7 @@ type TransactionBiz interface {
 	DeleteTransaction(ctx fiber.Ctx, userId string, req *req.DeleteTransactionReq) error
 	GetTransaction(ctx fiber.Ctx, userId string, id string) (*res.TransactionItem, error)
 	GetTransactionList(ctx fiber.Ctx, userId string) ([]*res.TransactionItem, error)
+	UploadTransaction(ctx fiber.Ctx, userId string, file *multipart.FileHeader) error
 }
 
 type transactionBiz struct {
@@ -299,4 +308,153 @@ func (b *transactionBiz) GetTransactionList(ctx fiber.Ctx, userId string) ([]*re
 	}
 
 	return txsRes, nil
+}
+
+// NOTE: 目前只适配了支付宝账单
+func (b *transactionBiz) UploadTransaction(ctx fiber.Ctx, userId string, file *multipart.FileHeader) error {
+
+	fileReader, err := file.Open()
+	if err != nil {
+		log.Errorf("open file error: %v", err)
+		return errors.New("internal server error")
+	}
+	defer fileReader.Close()
+
+	decoder := simplifiedchinese.GBK.NewDecoder()
+	utf8Reader := transform.NewReader(fileReader, decoder)
+	csvReader := csv.NewReader(utf8Reader)
+
+	csvReader.LazyQuotes = true
+	csvReader.TrimLeadingSpace = true
+	csvReader.FieldsPerRecord = -1
+	csvReader.Comma = ','
+
+	for i := 0; i < 25; i++ {
+		if _, err := csvReader.Read(); err != nil {
+			log.Errorf("read csv error: %v", err)
+			return errors.New("file format error")
+		}
+	}
+
+	var records [][]string
+
+	for {
+		record, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Errorf("read csv error: %v", err)
+			return errors.New("internal server error")
+		}
+		records = append(records, record)
+	}
+
+	for _, record := range records {
+		// 不计收支或金额为0 跳过
+		if record[5] == "不计收支" || record[6] == "0" || record[6] == "" || record[6] == "0.00" {
+			continue
+		}
+
+		// 解析日期 2024-01-01 12:00:00
+		date, err := time.Parse(time.DateTime, record[0])
+		if err != nil {
+			log.Errorf("parse transaction date error: %v", err)
+			return errors.New("invalid date format")
+		}
+
+		// 解析金额, 保留两位小数
+		amount, err := strconv.ParseFloat(record[6], 64)
+		if err != nil {
+			log.Errorf("parse transaction amount error: %v", err)
+			return errors.New("invalid amount format")
+		}
+
+		// 解析类型
+		var transactionType int
+		if record[5] == "支出" {
+			transactionType = 0
+		} else if record[5] == "收入" {
+			transactionType = 1
+		}
+
+		// 解析备注
+		remark := record[4]
+
+		// 解析分类
+		var categoryId string
+		category, err := b.Queries.GetCategoryByName(ctx.Context(), record[1])
+		if err != nil || category.ID == "" {
+			categoryId, err = b.Sid.GenString()
+			if err != nil {
+				log.Errorf("generate category id error: %v", err)
+				return errors.New("internal server error")
+			}
+			b.Queries.InsertCategory(ctx.Context(), repository.InsertCategoryParams{
+				ID:        categoryId,
+				Name:      record[1],
+				Color:     RandomColor(),
+				Icon:      RandomEmojiByName(record[1]),
+				CreatedBy: pgtype.Text{String: userId, Valid: true},
+				CreatedAt: pgtype.Timestamp{Time: time.Now(), Valid: true},
+			})
+		} else {
+			categoryId = category.ID
+		}
+
+		tId, err := b.Sid.GenString()
+		if err != nil {
+			log.Errorf("generate transaction id error: %v", err)
+			return errors.New("internal server error")
+		}
+
+		if err := b.Queries.InsertTransaction(ctx.Context(), repository.InsertTransactionParams{
+			ID:         tId,
+			Name:       record[2],
+			Type:       pgtype.Int2{Int16: int16(transactionType), Valid: true},
+			Amount:     pgtype.Numeric{Int: big.NewInt(int64(amount * 100)), Exp: -2, Valid: true},
+			Date:       pgtype.Timestamp{Time: date, Valid: true},
+			Remark:     pgtype.Text{String: remark, Valid: true},
+			CategoryID: categoryId,
+			CreatedBy:  pgtype.Text{String: userId, Valid: true},
+			CreatedAt:  pgtype.Timestamp{Time: time.Now(), Valid: true},
+		}); err != nil {
+			log.Errorf("insert transaction error: %v", err)
+			return errors.New("internal server error")
+		}
+	}
+
+	return nil
+}
+
+func RandomColor() string {
+	return fmt.Sprintf("#%06X", rand.Intn(0xFFFFFF))
+}
+
+func RandomEmojiByName(name string) string {
+	categoryEmojis := map[string]string{
+		"出行": "🚗",
+		"红包": "🧧",
+		"餐饮": "🍜",
+		"健康": "💪",
+		"购物": "🛒",
+		"娱乐": "🎉",
+		"数码": "📱",
+		"服饰": "🧥",
+		"缴费": "💰",
+		"其他": "🤔",
+	}
+
+	// 备选emoji数组
+	fallbackEmojis := []string{
+		"🎨", "🎮", "🎲", "🎯", "🎳", "🎵", "🎹", "🎬", "🎃",
+	}
+
+	for category, emoji := range categoryEmojis {
+		if strings.Contains(name, category) {
+			return emoji
+		}
+	}
+
+	return fallbackEmojis[rand.Intn(len(fallbackEmojis))]
 }

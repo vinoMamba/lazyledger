@@ -16,6 +16,7 @@ type TransactionHandler interface {
 	DeleteTransaction(ctx fiber.Ctx) error
 	GetTransaction(ctx fiber.Ctx) error
 	GetTransactionList(ctx fiber.Ctx) error
+	UploadTransaction(ctx fiber.Ctx) error
 }
 
 type transactionHandler struct {
@@ -183,4 +184,24 @@ func (h *transactionHandler) GetTransactionList(ctx fiber.Ctx) error {
 		})
 	}
 	return ctx.Status(fiber.StatusOK).JSON(txs)
+}
+
+func (h *transactionHandler) UploadTransaction(ctx fiber.Ctx) error {
+	userId := GetUserIdFromLocals(ctx)
+
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if err := h.transactionBiz.UploadTransaction(ctx, userId, file); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
 }

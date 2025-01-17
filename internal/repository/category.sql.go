@@ -51,6 +51,27 @@ func (q *Queries) GetCategoryById(ctx context.Context, id string) (Category, err
 	return i, err
 }
 
+const getCategoryByName = `-- name: GetCategoryByName :one
+SELECT id, name, color, icon, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE name = $1 AND is_deleted = false LIMIT 1
+`
+
+func (q *Queries) GetCategoryByName(ctx context.Context, name string) (Category, error) {
+	row := q.db.QueryRow(ctx, getCategoryByName, name)
+	var i Category
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Color,
+		&i.Icon,
+		&i.IsDeleted,
+		&i.CreatedBy,
+		&i.CreatedAt,
+		&i.UpdatedBy,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getCategoryListByCreator = `-- name: GetCategoryListByCreator :many
 SELECT id, name, color, icon, is_deleted, created_by, created_at, updated_by, updated_at FROM categories WHERE created_by = $1 AND name LIKE $2 AND is_deleted = false ORDER BY created_at DESC
 `

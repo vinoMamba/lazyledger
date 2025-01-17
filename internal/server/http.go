@@ -80,7 +80,7 @@ func NewHttpServer(
 	transaction.Delete("", transactionHandler.DeleteTransaction)
 	transaction.Get("/list", transactionHandler.GetTransactionList)
 	transaction.Get("/info", transactionHandler.GetTransaction)
-
+	transaction.Post("/upload", transactionHandler.UploadTransaction)
 	app.Use(middleware.NotFound())
 	return app
 }

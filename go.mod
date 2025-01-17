@@ -4,6 +4,7 @@ go 1.23.3
 
 require (
 	github.com/go-playground/validator/v10 v10.23.0
+	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/wire v0.6.0

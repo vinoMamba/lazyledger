@@ -11,6 +11,9 @@ INSERT INTO categories (
 -- name: GetCategoryById :one
 SELECT * FROM categories WHERE id = $1 AND is_deleted = false LIMIT 1;
 
+-- name: GetCategoryByName :one
+SELECT * FROM categories WHERE name = $1 AND is_deleted = false LIMIT 1;
+
 -- name: UpdateCategory :exec
 UPDATE categories SET 
 name = $2,
